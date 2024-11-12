@@ -1,14 +1,13 @@
-# Dockerfile
-FROM mysql:8.4
+# Postgres Container
+FROM postgres:latest
 
 # Set environment variables
-ENV MYSQL_ROOT_PASSWORD=sahihi_mysql_password
-ENV MYSQL_DATABASE=sahihi_mysql_database
-ENV MYSQL_USER=sahihi_mysql_user
-ENV MYSQL_PASSWORD=sahihi_mysql_password
+ENV POSTGRES_DB db_rangwena
+ENV POSTGRES_USER user_rangwena
+ENV POSTGRES_PASSWORD password_rangwena
 
 # Copy the custom entrypoint script into the container
-COPY init.sql /docker-entrypoint-initdb.d/init.sql
+# COPY init.sql /docker-entrypoint-initdb.d/init.sql
 
-# Expose the MySQL port
-EXPOSE 3306
+# Expose the default PostgreSQL port (5432)
+EXPOSE 5432

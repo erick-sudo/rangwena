@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # sahihi-api:
+  # rangwena-nest-api:
   #   build:
   #     context: sahihi-interior-builders-api
   #     dockerfile: Dockerfile
@@ -16,9 +16,9 @@ services:
   #     - JWT_SECRET="xa5FKG7rDZLX8CKnmMktLp4ljuZqGGzQBBAF5eCW9hwKAR5Gibs4ucivymaZTdihVMaSVKQ+ToYECC3EL+Qa0w=="
   #     - PORT=3000
   #   networks:
-  #     - dev_sahihi_network
+  #     - dev_rangwena_network
 
-  # sahihi-vue:
+  # rangwena-vuetify:
   #   build:
   #     context: sahihi-interior-builders-vue
   #     dockerfile: Dockerfile
@@ -28,22 +28,31 @@ services:
   #   ports:
   #     - "4000:80"
   #   networks:
-  #     - dev_sahihi_network
+  #     - dev_rangwena_network
 
-  mysql_db:
+  postgres_db:
     build:
-      context: db/mysql
+      context: infrastructure_services/db/postgres
       dockerfile: Dockerfile
-    container_name: sahihi_mysql_db
-    ports:
-      - "3306:3306"
+    container_name: dev_postgres_rangwena
     environment:
-      MYSQL_ROOT_PASSWORD: sahihi_mysql_password
-      MYSQL_DATABASE: sahihi_mysql_database
-      MYSQL_USER: sahihi_mysql_user
-      MYSQL_PASSWORD: sahihi_mysql_password
+      POSTGRES_DB: db_rangwena
+      POSTGRES_USER: user_rangwena
+      POSTGRES_PASSWORD: password_rangwena
+    ports:
+      - "5433:5432"
+    # volumes:
+    #   - postgres-data:/var/lib/postgresql/data
     networks:
-      - dev_sahihi_network
+      - dev_rangwena_network
 
 networks:
-  dev_sahihi_network: {}
+  dev_rangwena_network: {}
+
+# volumes:
+#   postgres-data:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: ./infrastructure_services/db/postgres/data
