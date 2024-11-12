@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # sahihi-api:
+  #   build:
+  #     context: sahihi-interior-builders-api
+  #     dockerfile: Dockerfile
+  #   container_name: sahihi_api
+  #   depends_on:
+  #     - mysql_db
+  #   ports:
+  #     - "5000:3000"
+  #   environment:
+  #     - VUE_FRONTEND=http://localhost:4000
+  #     - DATABASE_URL=mysql://sahihi_mysql_user:sahihi_mysql_password@mysql_db:3306/sahihi_mysql_database
+  #     - JWT_SECRET="xa5FKG7rDZLX8CKnmMktLp4ljuZqGGzQBBAF5eCW9hwKAR5Gibs4ucivymaZTdihVMaSVKQ+ToYECC3EL+Qa0w=="
+  #     - PORT=3000
+  #   networks:
+  #     - dev_sahihi_network
+
+  # sahihi-vue:
+  #   build:
+  #     context: sahihi-interior-builders-vue
+  #     dockerfile: Dockerfile
+  #   container_name: sahihi_vue
+  #   depends_on:
+  #     - sahihi-api
+  #   ports:
+  #     - "4000:80"
+  #   networks:
+  #     - dev_sahihi_network
+
+  mysql_db:
+    build:
+      context: db/mysql
+      dockerfile: Dockerfile
+    container_name: sahihi_mysql_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: sahihi_mysql_password
+      MYSQL_DATABASE: sahihi_mysql_database
+      MYSQL_USER: sahihi_mysql_user
+      MYSQL_PASSWORD: sahihi_mysql_password
+    networks:
+      - dev_sahihi_network
+
+networks:
+  dev_sahihi_network: {}
