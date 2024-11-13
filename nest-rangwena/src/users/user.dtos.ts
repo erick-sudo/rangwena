@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsPhoneNumber,
   IsStrongPassword,
+  Length,
   ValidateIf,
 } from 'class-validator';
 import { OmitType, PartialType } from '@nestjs/mapped-types';
@@ -33,13 +34,36 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto extends PartialType(
-  OmitType(CreateUserDto, ['password', 'confirmPassword', 'email', 'phoneNumber'] as const),
+  OmitType(CreateUserDto, [
+    'password',
+    'confirmPassword',
+    'email',
+    'phoneNumber',
+  ] as const),
 ) {}
 
 export class SignInDto {
-  @IsNotEmpty({ message: 'an email, a phone number, or a username is required' })
+  @IsNotEmpty({
+    message: 'an email, a phone number, or a username is required',
+  })
   identity: string;
 
   @IsNotEmpty({ message: 'a password is required' })
   password: string;
+}
+
+export class PasswordResetRequestDto extends OmitType(SignInDto, [
+  'password',
+]) {}
+
+export class PasswordResetDto {
+  @IsStrongPassword({ minLength: 8 }, { message: 'weak password' })
+  newPassword: string;
+
+  @ValidateIf((o, v) => !!o.password && !!o.confirmPassword)
+  @IsMatching('password', { message: 'passwords do not match' })
+  confirmNewPassword: string;
+
+  @Length(6, 6, { message: 'otp must be 6 characters' })
+  otp: string;
 }

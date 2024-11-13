@@ -1,7 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { SignInDto } from 'src/users/user.dtos';
+import {
+  PasswordResetDto,
+  PasswordResetRequestDto,
+  SignInDto,
+} from 'src/users/user.dtos';
 import { AuthenticatedUser } from 'src/users/user.authenticated';
 
 @Injectable()
@@ -23,5 +27,26 @@ export class AuthenticationService {
     const payload = { sub: user.id, email: user.email };
 
     return { access_token: await this.jwtService.signAsync(payload, {}) };
+  }
+
+  async passwordResetRequest({ identity }: PasswordResetRequestDto) {
+    const user =
+      await this.usersService.findByUsernameOrEmailOrPhoneNumber(identity);
+
+    // Generate a one time password
+
+    return {
+      message:
+        'Please follow the instructions sent to your email to reset your password.',
+    };
+  }
+
+  async passwordReset({ newPassword, otp }: PasswordResetDto) {
+    // const user =
+    //   await this.usersService.findByUsernameOrEmailOrPhoneNumber(otp);
+
+    return {
+      message: 'You have successfully reset your password.',
+    };
   }
 }

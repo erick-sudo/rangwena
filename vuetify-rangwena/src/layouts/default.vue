@@ -4,10 +4,11 @@
       <router-view />
     </v-main>
 
-    <AppFooter />
+    <AlertsHost />
   </v-app>
 </template>
 
 <script lang="ts" setup>
-  //
+import AlertsHost from "@/components/AlertsHost.vue";
+//
 </script>

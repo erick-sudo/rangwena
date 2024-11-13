@@ -24,7 +24,7 @@ export class UsersService {
       },
     });
     if (!user) {
-      throw new UnauthorizedException('User not found.');
+      throw new NotFoundException('User not found.');
     }
     return user;
   }

@@ -12,7 +12,11 @@ import {
 } from '@nestjs/common';
 import { Request as ExpressRequest, Response } from 'express';
 import { Public } from 'src/decorators/route.decorator';
-import { SignInDto } from 'src/users/user.dtos';
+import {
+  PasswordResetDto,
+  PasswordResetRequestDto,
+  SignInDto,
+} from 'src/users/user.dtos';
 import { AuthenticationService } from './authentication.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -54,7 +58,7 @@ export class AuthenticationController {
     };
   }
 
-  @Get('current/user')
+  @Get('current-user')
   currentUser(@Request() req: ExpressRequest) {
     return {
       principal: req.authentication?.principal,
@@ -74,5 +78,33 @@ export class AuthenticationController {
     return {
       message: 'Logout successful',
     };
+  }
+
+  @Public()
+  @Post('request-password-reset')
+  async passwordResetRequest(
+    @Body(
+      new ValidationPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    passwordResetRequestDto: PasswordResetRequestDto,
+  ) {
+    return await this.authenticationService.passwordResetRequest(
+      passwordResetRequestDto,
+    );
+  }
+
+  @Public()
+  @Post('reset-password')
+  async passwordReset(
+    @Body(
+      new ValidationPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    passwordResetDto: PasswordResetDto,
+  ) {
+    return await this.authenticationService.passwordReset(passwordResetDto);
   }
 }
