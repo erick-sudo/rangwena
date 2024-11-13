@@ -7,7 +7,7 @@
       v-model="valid"
       @submit.prevent="handleSubmit"
     >
-      <h3>Create a new password.</h3>
+      <h3 class="">Create a new password.</h3>
       <v-text-field
         type="password"
         rounded="lg"

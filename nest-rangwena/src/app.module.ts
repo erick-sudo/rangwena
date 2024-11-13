@@ -15,6 +15,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/authentication/authentication.guard';
 import { RolesGuard } from './auth/authorization/roles.guard';
 import { PasswordService } from './password/password.service';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { PasswordService } from './password/password.service';
     AuthorizationModule,
     PrismaModule,
     RolesModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [

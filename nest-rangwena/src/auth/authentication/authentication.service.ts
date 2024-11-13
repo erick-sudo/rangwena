@@ -7,12 +7,14 @@ import {
   SignInDto,
 } from 'src/users/user.dtos';
 import { AuthenticatedUser } from 'src/users/user.authenticated';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async signIn({ identity, password }: SignInDto) {
@@ -33,7 +35,8 @@ export class AuthenticationService {
     const user =
       await this.usersService.findByUsernameOrEmailOrPhoneNumber(identity);
 
-    // Generate a one time password
+    // Send mail
+    await this.mailService.respondToPasswordResetRequest(user);
 
     return {
       message:

@@ -97,3 +97,30 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "your_email@gmail.com",
+    pass: "your_app_password",
+  },
+});
+
+model Activity {
+  id          String @id @default(uuid())
+  name        String
+  description String
+  location    String
+}
+
+model ActivityFunding {
+  id          String    @id @default(uuid())
+  activity    Activity  @relation(fields: [activityId], references: [id])
+  activityId  String
+  
+}
