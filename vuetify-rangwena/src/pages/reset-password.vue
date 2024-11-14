@@ -12,16 +12,26 @@
       <v-form
         :disabled="submitting"
         ref="form"
-        class="flex flex-col grow max-w-sm"
+        class="flex flex-col grow max-w-sm min-w-[24rem]"
         v-model="valid"
         @submit.prevent="handleSubmit"
       >
-        <h3 class="text-gray-700 text-xl font-semibold">
-          Create a new password.
+        <v-btn
+          @click="$router.push('/sign-in')"
+          title="Back to sign in"
+          variant="tonal"
+          color="primary"
+          icon="mdi-arrow-left"
+        ></v-btn>
+        <h3 class="text-gray-700 text-2xl font-semibold">
+          Create a new password
         </h3>
         <v-text-field
-          density="compact"
-          type="password"
+          prepend-inner-icon="mdi-key-outline"
+          :append-inner-icon="visibilityIcon"
+          @click:append-inner="toggleVisibility"
+          density="comfortable"
+          :type="seePassword"
           rounded="lg"
           class="mt-2"
           color="primary"
@@ -38,8 +48,11 @@
           ]"
         ></v-text-field>
         <v-text-field
-          density="compact"
-          type="password"
+          prepend-inner-icon="mdi-key-outline"
+          :append-inner-icon="visibilityIcon"
+          @click:append-inner="toggleVisibility"
+          density="comfortable"
+          :type="seePassword"
           rounded="lg"
           class="mt-2"
           color="primary"
@@ -106,6 +119,14 @@ const otpError = ref(false);
 const submitting = ref(false);
 const authStore = useAuthStore();
 const { pushAlert } = useAlertStore();
+const seePassword = ref("password");
+
+const toggleVisibility = () =>
+  (seePassword.value = seePassword.value === "password" ? "text" : "password");
+
+const visibilityIcon = computed(() =>
+  seePassword.value === "password" ? "mdi-eye-outline" : "mdi-eye-off-outline"
+);
 
 const handleSubmit = async () => {
   if (valid.value) {

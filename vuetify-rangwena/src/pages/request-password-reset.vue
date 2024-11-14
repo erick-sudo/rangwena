@@ -15,17 +15,25 @@
         v-model="valid"
         @submit.prevent="handleSubmit"
       >
+        <v-btn
+          @click="$router.push('/sign-in')"
+          title="Back to sign in"
+          variant="tonal"
+          color="primary"
+          icon="mdi-arrow-left"
+        ></v-btn>
         <p class="text-lg">
           Please identify yourself by providing your username, email, or phone
           number and we will send you instructions on how to reset your
           password.
         </p>
         <v-text-field
-          density="compact"
+          prepend-inner-icon="mdi-account"
+          density="comfortable"
           :disabled="sending || waitingResetWindow"
           label="Username, Email, or Phone"
           rounded="lg"
-          class="mt-4 mx-4"
+          class=""
           color="primary"
           clearable
           variant="solo-filled"
@@ -38,12 +46,14 @@
           ]"
         ></v-text-field>
 
-        <div class="flex mx-4">
+        <div class="flex">
           <span v-if="waitingResetWindow" class="mx-4"
             >{{ waitingTimer }} sec</span
           >
           <span class="flex-grow"></span>
-          <RouterLink class="" to="/reset-password"
+          <RouterLink
+            class="text-orange-600 hover:text-orange-800 duration-300"
+            to="/reset-password"
             >I have a reset code?</RouterLink
           >
         </div>
@@ -55,7 +65,7 @@
           :disabled="sending || waitingResetWindow"
           type="submit"
           color="primary"
-          class="mx-4"
+          class=""
           >{{ sendBtnMessage }}</v-btn
         >
       </v-form>

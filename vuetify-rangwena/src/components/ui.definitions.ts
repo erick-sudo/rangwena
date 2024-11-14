@@ -4,10 +4,10 @@ export interface AlertResponse {
     | "error"
     | "warning"
     | "info"
-    | "success-fill"
-    | "error-fill"
-    | "warning-fill"
-    | "info-fill";
+    // | "success-fill"
+    // | "error-fill"
+    // | "warning-fill"
+    // | "info-fill";
   message: any;
 }
 

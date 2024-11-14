@@ -19,12 +19,9 @@
           @submit.prevent="handleSubmit"
           class="flex flex-col max-w-sm flex-grow"
         >
-          <v-icon
-            class="mx-auto"
-            color="primary"
-            icon="$vuetify"
-            size="64"
-          ></v-icon>
+          <RouterLink class="mx-auto" to="/">
+            <v-icon color="primary" icon="$vuetify" size="64"></v-icon>
+          </RouterLink>
           <h1 class="text-gray-800 text-2xl font-semibold mx-auto">
             Welcome back!
           </h1>
@@ -33,6 +30,7 @@
           </h3>
 
           <v-text-field
+            prepend-inner-icon="mdi-account"
             density="comfortable"
             rounded="lg"
             class="mt-2"
@@ -50,6 +48,7 @@
           ></v-text-field>
 
           <v-text-field
+            prepend-inner-icon="mdi-key-outline"
             type="password"
             density="comfortable"
             rounded="lg"
@@ -130,6 +129,7 @@ import { useAuthStore } from "@/stores/store.auth";
 
 const authStore = useAuthStore();
 const { pushAlert } = useAlertStore();
+const router = useRouter();
 
 const valid = ref(false);
 const rememberMe = ref(false);
@@ -154,6 +154,7 @@ const handleSubmit = async () => {
         // Clear form on success
         if (res.status === "success") {
           form.value?.reset();
+          router.push("/");
         }
       })
       .finally(() => {
