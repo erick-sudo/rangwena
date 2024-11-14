@@ -36,6 +36,7 @@ export interface RUser extends Entity, TimeStamps {
 export interface LoginForm {
   identity: string;
   password: string;
+  rememberMe?: boolean;
 }
 
 export interface ResetPasswordForm {

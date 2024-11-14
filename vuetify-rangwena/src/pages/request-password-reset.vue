@@ -1,54 +1,65 @@
 <template>
-  <div>
-    <v-form
-      ref="form"
-      class="d-flex flex-column"
-      v-model="valid"
-      @submit.prevent="handleSubmit"
+  <div class="p-4 min-h-screen flex flex-col justify-center">
+    <div
+      class="container mx-auto flex flex-col items-center justify-center gap-4"
     >
-      <p>
-        Please identify yourself by providing your username, email, or phone
-        number and we will send you instructions on how to reset your password.
-      </p>
-      <v-text-field
-        :disabled="sending || waitingResetWindow"
-        placeholder="Username, Email, or Phone"
-        rounded="lg"
-        class="mt-4"
-        color="rgb(219 39 119)"
-        clearable
-        variant="solo-filled"
-        v-model="identity"
-        :counter="75"
-        :rules="[
-          (v) =>
-            !!v ||
-            'Atleast a username, an email, or a phone number is required.',
-        ]"
-      ></v-text-field>
-
-      <div class="d-flex">
-        <span v-if="waitingResetWindow" class="mx-4"
-          >{{ waitingTimer }} sec</span
-        >
-        <span class="flex-grow-1"></span>
-        <RouterLink
-          color="rgb(219 39 119)"
-          class="align-self-end"
-          to="/reset-password"
-          >I have a reset code?</RouterLink
-        >
+      <div class="max-w-lg h-44">
+        <img
+          class="w-full h-full object-contain"
+          src="/svg/undraw_forgot_password.svg"
+        />
       </div>
-
-      <v-btn
-        block
-        :disabled="sending || waitingResetWindow"
-        type="submit"
-        color="rgb(219 39 119)"
-        class="text-white"
-        >{{ sendBtnMessage }}</v-btn
+      <v-form
+        ref="form"
+        class="flex flex-col grow max-w-sm gap-2"
+        v-model="valid"
+        @submit.prevent="handleSubmit"
       >
-    </v-form>
+        <p class="text-lg">
+          Please identify yourself by providing your username, email, or phone
+          number and we will send you instructions on how to reset your
+          password.
+        </p>
+        <v-text-field
+          density="compact"
+          :disabled="sending || waitingResetWindow"
+          label="Username, Email, or Phone"
+          rounded="lg"
+          class="mt-4 mx-4"
+          color="primary"
+          clearable
+          variant="solo-filled"
+          v-model="identity"
+          :counter="75"
+          :rules="[
+            (v) =>
+              !!v ||
+              'Atleast a username, an email, or a phone number is required.',
+          ]"
+        ></v-text-field>
+
+        <div class="flex mx-4">
+          <span v-if="waitingResetWindow" class="mx-4"
+            >{{ waitingTimer }} sec</span
+          >
+          <span class="flex-grow"></span>
+          <RouterLink class="" to="/reset-password"
+            >I have a reset code?</RouterLink
+          >
+        </div>
+
+        <v-btn
+          rounded="lg"
+          block
+          :loading="sending"
+          :disabled="sending || waitingResetWindow"
+          type="submit"
+          color="primary"
+          class="mx-4"
+          >{{ sendBtnMessage }}</v-btn
+        >
+      </v-form>
+    </div>
   </div>
 </template>
 <script setup lang="ts">

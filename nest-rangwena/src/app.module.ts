@@ -21,6 +21,7 @@ import { MailModule } from './mail/mail.module';
   imports: [
     // Load configurations and variable validations
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [configuration],
       envFilePath: ['.env', '.development.env'],
       cache: true,
@@ -33,6 +34,12 @@ import { MailModule } from './mail/mail.module';
         JWT_SECRET: Joi.string().required(),
         DATABASE_URL: Joi.string().required(),
         VUE_FRONTEND: Joi.string().required(),
+        MAIL_SERVICE: Joi.string().required(),
+        MAIL_HOST: Joi.string().required(),
+        MAIL_PORT: Joi.number().port().default(465),
+        MAIL_USER: Joi.string().required(),
+        MAIL_PASSWORD: Joi.string().required(),
+        MAIL_FROM: Joi.string().default('noreply@example.com'),
       }),
       validationOptions: {
         allowUnknown: true,
