@@ -23,7 +23,7 @@ export default createVuetify({
         colors: {
           primary: colors.deepOrange.accent3,
           primaryContainer: colors.deepOrange.darken3,
-          secondary: colors.deepOrange.lighten4,
+          onPrimaryContainer: colors.deepOrange.lighten4
         },
       },
     },

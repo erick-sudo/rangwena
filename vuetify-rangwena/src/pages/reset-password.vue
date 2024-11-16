@@ -12,7 +12,7 @@
       <v-form
         :disabled="submitting"
         ref="form"
-        class="flex flex-col grow max-w-sm min-w-[24rem]"
+        class="flex flex-col grow max-w-sm min-w-[20rem]"
         v-model="valid"
         @submit.prevent="handleSubmit"
       >

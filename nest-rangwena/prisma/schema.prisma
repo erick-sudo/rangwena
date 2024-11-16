@@ -25,6 +25,7 @@ model User {
   passwordDigest  String
   userRoles       UserRole[]
   OneTimePassword OneTimePassword[]
+  suggestions     Suggestion[]
 }
 
 model Role {

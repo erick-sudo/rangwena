@@ -3,7 +3,7 @@
     style="z-index: 999"
     class="fixed bottom-4 w-full max-w-sm left-1/2 -translate-x-1/2 grid gap-2"
   >
-    <div v-for="(alertObj, index) in alerts" :key="index">
+    <transition name="slide" v-for="(alertObj, index) in alerts" :key="index">
       <v-alert
         rounded="lg"
         :type="alertObj.alert.status"
@@ -15,7 +15,7 @@
           <!-- <button @click="dismissAlert(alertObj.key)" class="font-bold">&times;</button> -->
         </DisplayObject>
       </v-alert>
-    </div>
+    </transition>
   </div>
 </template>
 

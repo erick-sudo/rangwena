@@ -1,5 +1,12 @@
-<template></template>
+<template>
+  <div>
+    <h1>Home</h1>
+  </div>
+</template>
 
-<script lang="ts" setup>
-//
-</script>
+<script lang="ts" setup></script>
+
+<route lang="yaml">
+meta:
+  layout: index
+</route>

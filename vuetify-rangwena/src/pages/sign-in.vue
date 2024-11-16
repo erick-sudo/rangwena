@@ -17,7 +17,7 @@
           v-model="valid"
           validate-on="input lazy"
           @submit.prevent="handleSubmit"
-          class="flex flex-col max-w-sm flex-grow"
+          class="flex flex-col max-w-sm min-w-[20rem] flex-grow"
         >
           <RouterLink class="mx-auto" to="/">
             <v-icon color="primary" icon="$vuetify" size="64"></v-icon>

@@ -59,6 +59,7 @@
         </div>
 
         <v-btn
+          size="large"
           rounded="lg"
           block
           :loading="sending"
