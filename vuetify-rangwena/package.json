@@ -15,6 +15,7 @@
     "joi": "^17.13.3",
     "postcss": "^8.4.49",
     "roboto-fontface": "*",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^3.4.14",
     "vue": "^3.4.31",
     "vuetify": "^3.6.11"

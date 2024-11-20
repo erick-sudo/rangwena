@@ -22,7 +22,7 @@ import { Public } from 'src/decorators/route.decorator';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
-@PreAuthorize<UserRole>({ tokens: [{ name: 'ROLE_ADMIN' }] })
+//@PreAuthorize<UserRole>({ tokens: [{ name: 'ROLE_ADMIN' }] })
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 

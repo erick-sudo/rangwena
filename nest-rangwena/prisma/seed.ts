@@ -30,6 +30,7 @@ async function main() {
   //   create: { name: 'ROLE_ENGINEER' },
   // });
 
+  console.log('Creating admin...');
   // Seed a user and assign the ROLE_ADMIN
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
@@ -51,6 +52,32 @@ async function main() {
       userId: adminUser.id,
       roleId: roleAdmin.id,
     },
+  });
+
+  console.log('Seeding members...');
+  const members = [
+    'Francie;Orwa;francieorwa@gmail.com;francie;0792753471',
+    'Sila;Stephene;silastephene@gmail.com;sila;0718238175',
+    'David;Masilva;davidmasilva@gmail.com;masilva;0795891318',
+    'Andrew;Nzioki;andrew-nzioki@gmail.com;drew;0797743568',
+    'Quincy;Linet;quincylinet@gmail.com;quincy;0718588815',
+  ];
+  members.forEach(async (member) => {
+    const [firstName, lastName, email, username, phoneNumber] =
+      member.split(';');
+    await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        firstName,
+        lastName,
+        email,
+        username,
+        phoneNumber,
+        createdAt: new Date(),
+        passwordDigest: hashedPassword('Password123@'),
+      },
+    });
   });
 
   console.log('Seeding completed!');

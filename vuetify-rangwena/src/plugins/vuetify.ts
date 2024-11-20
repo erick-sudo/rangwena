@@ -16,14 +16,14 @@ import colors from "vuetify/util/colors";
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
   theme: {
-    // defaultTheme: 'dark',
+    defaultTheme: "dark",
     themes: {
-      light: {
-        dark: false,
+      dark: {
         colors: {
           primary: colors.deepOrange.accent3,
           primaryContainer: colors.deepOrange.darken3,
-          onPrimaryContainer: colors.deepOrange.lighten4
+          primaryVariant: colors.deepOrange.lighten3,
+          onPrimaryContainer: colors.deepOrange.lighten4,
         },
       },
     },

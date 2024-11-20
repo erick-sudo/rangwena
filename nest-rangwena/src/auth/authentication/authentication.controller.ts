@@ -48,7 +48,7 @@ export class AuthenticationController {
       // Cookie to be sent over https in production environment
       secure: this.configService.get<string>('NODE_ENV') === 'production',
       // Cookie expires after an hour
-      maxAge: 60 * 60 * 1000,
+      maxAge: 60 * 60 * 1000 * 24,
       // Prevent CSRF
       sameSite: 'lax',
     });

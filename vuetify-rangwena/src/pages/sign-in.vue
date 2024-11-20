@@ -22,10 +22,10 @@
           <RouterLink class="mx-auto" to="/">
             <v-icon color="primary" icon="$vuetify" size="64"></v-icon>
           </RouterLink>
-          <h1 class="text-gray-800 text-2xl font-semibold mx-auto">
+          <h1 class="text-2xl font-semibold mx-auto">
             Welcome back!
           </h1>
-          <h3 class="text-gray-600 text-xl font-semibold mx-auto">
+          <h3 class="text-xl font-semibold mx-auto">
             Log into your account
           </h3>
 
@@ -70,7 +70,7 @@
               v-model="rememberMe"
             ></v-checkbox-btn>
             <RouterLink
-              class="text-orange-600 hover:text-orange-700 duration-300"
+              class="text-primary"
               to="/request-password-reset"
               >Forgot password?</RouterLink
             >
@@ -97,7 +97,7 @@
           <v-btn
             size="large"
             prepend-icon="mdi-google"
-            class="mt-4"
+            class="mt-4 border"
             variant="tonal"
             rounded="lg"
             type="button"
@@ -109,7 +109,7 @@
           <v-btn
             size="large"
             prepend-icon="mdi-facebook"
-            class="mt-4"
+            class="mt-4 border"
             variant="tonal"
             rounded="lg"
             type="button"

@@ -54,3 +54,43 @@ export const loginSchema = Joi.object({
     .required()
     .messages({ "string.min": "Weak password" }),
 });
+
+export type MessageStatus =
+  | "new"
+  | "draft"
+  | "pending"
+  | "sent"
+  | "delivered"
+  | "viewed";
+
+export interface RawWSChatMessage {
+  from: string;
+  to: string;
+  conversationType: ConversationType;
+  content: string;
+  time: string;
+}
+
+export interface WSChatMessage extends RawWSChatMessage {
+  status: MessageStatus;
+}
+
+export type Conversations = WSChatMessage[];
+
+export type ConversationPartner = RUser;
+
+export interface LocalConversation {
+  partner: ConversationPartner;
+  conversations: Conversations;
+}
+
+export type LocalConversationsStore = Record<string, LocalConversation>;
+
+export type ChatMessagePosition = "left" | "right";
+export type ConversationType = "individual" | "channel";
+
+export interface UIChatMessage extends WSChatMessage {
+  pos: ChatMessagePosition;
+  next: boolean;
+  prev: boolean;
+}

@@ -30,9 +30,22 @@ services:
   #   networks:
   #     - dev_rangwena_network
 
+  redis:
+    build:
+      context: infrastructure_services/redis
+      dockerfile: Dockerfile
+    container_name: dev_redis_rangwena
+    environment:
+      REDIS_PASSWORD: redis_password
+    ports:
+      - "6379:6379"
+    networks:
+      - dev_rangwena_network
+
+
   postgres_db:
     build:
-      context: infrastructure_services/db/postgres
+      context: infrastructure_services/postgres
       dockerfile: Dockerfile
     container_name: dev_postgres_rangwena
     environment:

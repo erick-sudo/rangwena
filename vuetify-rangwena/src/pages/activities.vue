@@ -1,20 +1,19 @@
 <template>
   <div class="grid">
-    <div class="max-w-lg border-r">
+    <div class="max-w-lg border-e border-b">
       <v-card
-        v-for="(item, index) in 2"
+        v-for="(item, index) in 10"
         :key="index"
-        class="mb-4 border-b"
+        class="border-b"
         rounded="0"
         elevation="0"
         density="compact"
-        prepend-avatar="http://localhost:8000/erick.jpg"
         subtitle="Salsa, merengue, y cumbia"
         title="Cuba"
       >
         <v-img
-          height="128"
-          src="https://picsum.photos/512/128?image=660"
+          height="200"
+          src="http://localhost:8000/gnome/xfce-leaves.svg"
           cover
         ></v-img>
 

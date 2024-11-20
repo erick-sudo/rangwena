@@ -23,7 +23,7 @@
           color="primary"
           icon="mdi-arrow-left"
         ></v-btn>
-        <h3 class="text-gray-700 text-2xl font-semibold">
+        <h3 class="text-2xl font-semibold">
           Create a new password
         </h3>
         <v-text-field
@@ -83,7 +83,7 @@
             @click="$router.push('/request-password-reset')"
             block
             color="primary"
-            class="mx-auto mb-2"
+            class="mx-auto mb-2 border"
             type="button"
             variant="tonal"
             rounded="lg"

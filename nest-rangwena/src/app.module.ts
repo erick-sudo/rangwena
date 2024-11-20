@@ -16,6 +16,8 @@ import { AuthenticationGuard } from './auth/authentication/authentication.guard'
 import { RolesGuard } from './auth/authorization/roles.guard';
 import { PasswordService } from './password/password.service';
 import { MailModule } from './mail/mail.module';
+import { ChatGateway } from './chat/chat.gateway';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -53,7 +55,7 @@ import { MailModule } from './mail/mail.module';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: '3600s',
+          expiresIn: `${3600 * 24}s`,
           algorithm: 'HS512',
         },
       }),
@@ -64,6 +66,7 @@ import { MailModule } from './mail/mail.module';
     PrismaModule,
     RolesModule,
     MailModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [
@@ -75,6 +78,7 @@ import { MailModule } from './mail/mail.module';
       useClass: RolesGuard,
     },
     PasswordService,
+    ChatGateway,
   ],
 })
 export class AppModule {}

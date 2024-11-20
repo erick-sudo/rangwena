@@ -52,7 +52,7 @@
           >
           <span class="flex-grow"></span>
           <RouterLink
-            class="text-orange-600 hover:text-orange-800 duration-300"
+            class="text-primary"
             to="/reset-password"
             >I have a reset code?</RouterLink
           >

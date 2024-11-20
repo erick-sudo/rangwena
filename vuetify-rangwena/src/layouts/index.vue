@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="h-full">
+  <v-layout full-height>
     <v-app-bar density="compact" elevation="0" class="border-b">
       <template v-slot:prepend>
         <v-app-bar-nav-icon
@@ -11,11 +11,41 @@
         ></v-app-bar-nav-icon>
       </template>
 
+      <template>
+        <v-speed-dial
+          location-strategy="connected"
+          location="bottom left"
+          transition="slide-x-reverse-transition"
+        >
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-fab
+              color="primary"
+              offset
+              absolute
+              v-bind="activatorProps"
+              size="small"
+              icon="$vuetify"
+            ></v-fab>
+          </template>
+
+          <v-btn color="primary" key="1" icon="mdi-seal-variant"></v-btn>
+          <v-btn color="primary" key="2" icon="mdi-message-outline"></v-btn>
+          <v-btn color="primary" key="3" icon="mdi-star-outline"></v-btn>
+          <v-btn color="primary" key="4" icon="mdi-wrench-outline"></v-btn>
+        </v-speed-dial>
+      </template>
+
       <v-app-bar-title>Rangwena Class of 2013</v-app-bar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn slim icon="mdi-human-male-board-poll"></v-btn>
+      <v-badge
+        dot
+        inline
+        :color="wsStore.online ? 'primary' : 'undefined'"
+      ></v-badge>
+
+      <v-btn size="small" icon="mdi-human-male-board-poll"></v-btn>
 
       <v-menu>
         <template #activator="{ props }">
@@ -36,9 +66,9 @@
         <v-card rounded="lg" elevation="8">
           <template #title>
             <v-list-item
-              prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
+              prepend-avatar="http://localhost:8000/erick.jpg"
               title="Sandra Adams"
-              subtitle="sandra_a88@gmailcom"
+              :subtitle="principal?.email"
             ></v-list-item>
           </template>
           <v-list density="compact" nav>
@@ -65,8 +95,8 @@
     <v-navigation-drawer v-model="drawer" expand-on-hover rail>
       <v-list>
         <v-list-item
-          prepend-avatar="https://randomuser.me/api/portraits/women/85.jpg"
-          subtitle="sandra_a88@gmailcom"
+          prepend-avatar="http://192.168.180.148:8000/erick.jpg"
+          :subtitle="principal?.email"
           title="Sandra Adams"
         ></v-list-item>
       </v-list>
@@ -75,39 +105,46 @@
 
       <v-list density="compact" nav>
         <v-list-item
+          prepend-icon="mdi-home-outline"
+          title="Home"
+          value="home"
+          to="/"
+          color="primary"
+        ></v-list-item>
+        <v-list-item
           prepend-icon="mdi-seal-variant"
           title="Membership"
           value="membership"
           to="membership"
-          active-color="primary"
+          color="primary"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-message-outline"
           title="Suggestion Box"
           value="suggestion-box"
           to="suggestion-box"
-          active-color="primary"
+          color="primary"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-chat-processing-outline"
           title="Chat"
           value="chat"
           to="chat"
-          active-color="primary"
+          color="primary"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-star-outline"
           title="Activities"
           value="activities"
           to="activities"
-          active-color="primary"
+          color="primary"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-wrench-outline"
           title="Settings"
           value="settings"
           to="settings"
-          active-color="primary"
+          color="primary"
         ></v-list-item>
       </v-list>
 
@@ -123,36 +160,15 @@
       </template>
     </v-navigation-drawer>
 
-    <div class="absolute bottom-8 right-12">
-      <v-speed-dial
-        :offset="[36]"
-        location="top center"
-        transition="slide-x-reverse-transition"
-      >
-        <template v-slot:activator="{ props: activatorProps }">
-          <v-fab
-            color="primary"
-            offset
-            v-bind="activatorProps"
-            size="small"
-            icon="$vuetify"
-          ></v-fab>
-        </template>
-
-        <v-btn color="primary" key="1" icon="mdi-seal-variant"></v-btn>
-        <v-btn color="primary" key="2" icon="mdi-message-outline"></v-btn>
-        <v-btn color="primary" key="3" icon="mdi-star-outline"></v-btn>
-        <v-btn color="primary" key="4" icon="mdi-wrench-outline"></v-btn>
-      </v-speed-dial>
-    </div>
-
-    <v-main class="" scrollable>
+    <v-main class="min-h-screen">
       <router-view #default="{ Component, route }">
         <transition>
           <component :is="Component" :key="route" />
         </transition>
       </router-view>
     </v-main>
+
+    <!-- <AppFooter /> -->
 
     <AlertsHost />
   </v-layout>
@@ -162,13 +178,13 @@
 import AlertsHost from "@/components/AlertsHost.vue";
 import { useAlertStore } from "@/stores/store.alerts";
 import { useAuthStore } from "@/stores/store.auth";
+import { useWsStore } from "@/stores/store.ws";
 
 const signingOut = ref(false);
-const { signout } = useAuthStore();
+const { signout, principal } = useAuthStore();
 const { pushAlert } = useAlertStore();
 const drawer = ref(null);
-
-const more = ["News", "Maps", "Books", "Flights", "Apps"];
+const wsStore = useWsStore();
 
 const handleSignout = async () => {
   signingOut.value = true;
