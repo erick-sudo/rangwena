@@ -18,6 +18,7 @@ import { PasswordService } from './password/password.service';
 import { MailModule } from './mail/mail.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { RedisModule } from './redis/redis.module';
+import { SuggestionsModule } from './suggestions/suggestions.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { RedisModule } from './redis/redis.module';
     RolesModule,
     MailModule,
     RedisModule,
+    SuggestionsModule,
   ],
   controllers: [AppController],
   providers: [

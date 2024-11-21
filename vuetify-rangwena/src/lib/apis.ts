@@ -13,4 +13,10 @@ export const APIS = {
     index: `${apiHost}/users`,
     retrieve: `${apiHost}/users/<:userId>`,
   },
+  suggestions: {
+    index: `${apiHost}/suggestions`,
+    retrieve: `${apiHost}/suggestions/<:suggestionId>`,
+    likes: `${apiHost}/suggestions/<:suggestionId>/toggle`,
+    countReactions: `${apiHost}/suggestions/<:suggestionId>/count-reactions`,
+  },
 };

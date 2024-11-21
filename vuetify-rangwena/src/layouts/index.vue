@@ -49,18 +49,14 @@
 
       <v-menu>
         <template #activator="{ props }">
-          <v-btn
-            color="primary"
-            variant="text"
-            width="24"
-            height="36"
-            rounded="lg"
-            class="ml-2"
-            icon
+          <v-avatar
+            border
+            :color="wsStore.online ? 'primary' : 'undefined'"
+            class="me-4"
             v-bind="props"
-          >
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
+            size="small"
+            image="http://localhost:8000/erick.jpg"
+          ></v-avatar>
         </template>
 
         <v-card rounded="lg" elevation="8">

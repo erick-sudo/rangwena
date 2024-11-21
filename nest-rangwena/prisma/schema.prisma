@@ -25,6 +25,8 @@ model User {
   passwordDigest  String
   userRoles       UserRole[]
   OneTimePassword OneTimePassword[]
+  suggestions     Suggestion[]
+  reactions   SuggestionReaction[]
 }
 
 model Role {
@@ -47,4 +49,25 @@ model OneTimePassword {
   userId    String
   value     String
   createdAt DateTime @default(now())
+}
+
+model Suggestion {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  resolved    Boolean   @default(false)
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  reactions   SuggestionReaction[]
+}
+
+model SuggestionReaction {
+  id            String      @id @default(uuid())
+  reaction      String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
+  suggestion    Suggestion  @relation(fields: [suggestionId], references: [id])
+  suggestionId  String
 }

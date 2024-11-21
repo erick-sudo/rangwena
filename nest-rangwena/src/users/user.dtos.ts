@@ -9,10 +9,6 @@ import {
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { IsMatching } from 'src/validators/ismatching.validator';
 
-// export class RUser extends User {
-
-// }
-
 export class CreateUserDto {
   @IsNotEmpty({ message: 'first name is required' })
   firstName: string;

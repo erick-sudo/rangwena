@@ -36,6 +36,9 @@ export class Principal {
   email: string;
 
   @Expose()
+  username: string;
+
+  @Expose()
   id: string;
 }
 
@@ -138,7 +141,11 @@ export class AuthenticationGuard implements CanActivate {
     // Attaching authtentication context (user details) to the request object
     request.authentication = Authentication.build()
       .addAuthorities(...(await this.usersService.getAuthorities(user)))
-      .setPrincipal({ email: user.email, id: user.id });
+      .setPrincipal({
+        email: user.email,
+        id: user.id,
+        username: user.username,
+      });
 
     return true;
   }

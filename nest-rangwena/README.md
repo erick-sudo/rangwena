@@ -98,29 +98,163 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-
-
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "your_email@gmail.com",
-    pass: "your_app_password",
-  },
+service: "Gmail",
+host: "smtp.gmail.com",
+port: 465,
+secure: true,
+auth: {
+user: "your_email@gmail.com",
+pass: "your_app_password",
+},
 });
 
 model Activity {
-  id          String @id @default(uuid())
-  name        String
-  description String
-  location    String
+id String @id @default(uuid())
+name String
+description String
+location String
 }
 
 model ActivityFunding {
-  id          String    @id @default(uuid())
-  activity    Activity  @relation(fields: [activityId], references: [id])
-  activityId  String
-  
+id String @id @default(uuid())
+activity Activity @relation(fields: [activityId], references: [id])
+activityId String
+
 }
+
+````js
+afterInit(server: Server) {
+  server.use((socket: Socket, next) => {
+    socket.handshake.headers.authorization
+    const [type, token] = socket.handshake.headers.authorization?.split(' ') ?? [];
+    const bearerToken = type === 'Bearer' ? token : undefined;
+
+    if (bearerToken) { // handle token validation
+      next()
+    } else {
+      next(new Error("Empty Token!"));
+    }
+  })
+}```
+
+```js
+
+type SocketMiddleware = (
+  socket: Socket,
+  next: (err?: Error) => void,
+) => void;
+
+export const AuthWsMiddleware = (
+  jwtService: JwtService,
+  configService: ConfigService,
+  userService: UserService,
+): SocketMiddleware => {
+  return async (socket: Socket, next) => {
+    try {
+      const token = socket.handshake?.auth?.token;
+
+      if (!token) {
+        throw new Error("Authorization token is missing");
+      }
+
+      let payload: JwtTokenPayload | null = null;
+
+      try {
+        payload = await jwtService.verifyAsync<JwtTokenPayload>(token);
+      } catch (error) {
+        throw new Error("Authorization token is invalid");
+      }
+
+      const strategy = new JwtStrategy(configService, userService);
+      const user = await strategy.validate(payload);
+
+      if (!user) {
+        throw new Error("User does not exist");
+      }
+
+      socket = Object.assign(socket, {
+        user: user!,
+      });
+      next();
+    } catch (error) {
+      next(new Error("Unauthorized"));
+    }
+  };
+};
+
+
+
+export class Gateway implements OnGatewayInit {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+  ) {}
+
+  async afterInit(@ConnectedSocket() socket: Socket) {
+    socket.use(
+      AuthWsMiddleware(
+        this.jwtService,
+        this.configService,
+        this.userService,
+      ),
+    );
+  }
+}
+
+````
+
+```js
+// in gateway
+async handleConnection(socket) {
+    const user: User = await this.jwtService.verify(
+      socket.handshake.query.token,
+      true
+    );
+
+    this.connectedUsers = [...this.connectedUsers, String(user._id)];
+
+    // Send list of connected users
+    this.server.emit('users', this.connectedUsers);
+  }
+
+
+
+
+  // in jwtService
+  async verify(token: string, isWs: boolean = false): Promise<User | null> {
+    try {
+      const payload = <any>jwt.verify(token, APP_CONFIG.jwtSecret);
+      const user = await this.usersService.findById(payload.sub._id);
+
+      if (!user) {
+        if (isWs) {
+          throw new WsException('Unauthorized access');
+        } else {
+          throw new HttpException(
+            'Unauthorized access',
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+
+      return user;
+    } catch (err) {
+      if (isWs) {
+        throw new WsException(err.message);
+      } else {
+        throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
+      }
+    }
+  }
+```
+
+````js
+  async handleConnection(socket) {
+      const user = whatEverFindOrVerifyUser();
+      if (!user) {
+        socket.disconnect(true);     // you can omit "true"
+    }
+  }```
+````

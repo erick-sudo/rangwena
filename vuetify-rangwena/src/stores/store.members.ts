@@ -5,7 +5,7 @@ import { RUser } from "@/lib/types";
 import { defineStore } from "pinia";
 
 const handleRequest = useAPI();
-export const useMemberStore = defineStore("memebers", {
+export const useMemberStore = defineStore("members", {
   state: () => ({
     _members: [] as RUser[],
   }),

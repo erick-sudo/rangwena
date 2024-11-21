@@ -16,7 +16,11 @@ import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:4000', 'http://192.168.180.148:4000'],
+    origin: [
+      'http://localhost:4000',
+      'http://192.168.180.148:4000',
+      'http://192.168.127.148:4000',
+    ],
   },
 })
 export class ChatGateway

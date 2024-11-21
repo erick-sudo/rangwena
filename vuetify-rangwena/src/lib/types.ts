@@ -6,6 +6,7 @@ export interface Entity {
 
 export interface Principal extends Entity {
   email: string;
+  username: string;
 }
 
 export interface TimeStamps {
@@ -55,6 +56,13 @@ export const loginSchema = Joi.object({
     .messages({ "string.min": "Weak password" }),
 });
 
+export type SuggestionToggleAction =
+  | "dismiss"
+  | "like"
+  | "dislike"
+  | "resolve"
+  | "unresolve";
+
 export type MessageStatus =
   | "new"
   | "draft"
@@ -93,4 +101,21 @@ export interface UIChatMessage extends WSChatMessage {
   pos: ChatMessagePosition;
   next: boolean;
   prev: boolean;
+}
+
+export interface CreateSuggestion {
+  title: string;
+  description: string;
+}
+
+export interface Suggestion extends Entity, TimeStamps, CreateSuggestion {
+  userId: string;
+  resolved: boolean;
+  user: string;
+}
+
+export interface SuggestionReactions {
+  like: boolean;
+  dislike: boolean;
+  me: "like" | "dislike" | null;
 }
