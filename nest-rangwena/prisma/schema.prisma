@@ -37,15 +37,15 @@ model Role {
 
 model UserRole {
   id     String @id @default(uuid())
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  role   Role   @relation(fields: [roleId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId String
 }
 
 model OneTimePassword {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   value     String
   createdAt DateTime @default(now())
@@ -56,7 +56,7 @@ model Suggestion {
   title       String
   description String
   resolved    Boolean   @default(false)
-  user        User      @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -66,8 +66,8 @@ model Suggestion {
 model SuggestionReaction {
   id            String      @id @default(uuid())
   reaction      String
-  user          User      @relation(fields: [userId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
-  suggestion    Suggestion  @relation(fields: [suggestionId], references: [id])
+  suggestion    Suggestion  @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
   suggestionId  String
 }

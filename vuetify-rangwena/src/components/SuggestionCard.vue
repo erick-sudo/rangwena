@@ -2,23 +2,27 @@
   <v-card :loading="!!!reactions">
     <v-text-field
       placeholder="Modify title"
-      class="ps-4 pe-4"
+      class="ps-4 pe-4 border-b"
       variant="plain"
       v-if="editting === 'title'"
       v-model="edittingValue"
     >
       <template #append-inner>
         <v-btn
-          v-if="!!edittingValue"
+          :loading="saving"
+          :disabled="!!!edittingValue || saving"
           class="pa-0"
           density="comfortable"
           size="small"
           variant="tonal"
           color="primary"
           rounded="xl"
+          @click="editSuggestion"
           icon="mdi-content-save-outline"
         ></v-btn>
         <v-btn
+          :disabled="saving"
+          @click="editting = null"
           class="pa-0"
           density="comfortable"
           size="small"
@@ -26,7 +30,6 @@
           color="primary"
           rounded="xl"
           icon="mdi-close-circle-outline"
-          v-else
         ></v-btn>
       </template>
     </v-text-field>
@@ -44,14 +47,50 @@
     <v-card-subtitle>
       Submitted by: <em class="font-semibold">@{{ suggestion.user }}</em>
     </v-card-subtitle>
-    <v-card-text>
+    <v-card-text v-if="editting === 'description'">
+      <v-textarea
+        placeholder="Modify title"
+        class="ps-4 pe-4 border rounded-lg"
+        variant="plain"
+        v-model="edittingValue"
+      >
+        <template #append-inner>
+          <div class="grid gap-2">
+            <v-btn
+              :loading="saving"
+              :disabled="saving || !!!edittingValue"
+              class="pa-0"
+              density="comfortable"
+              size="small"
+              variant="tonal"
+              color="primary"
+              rounded="xl"
+              @click="editSuggestion"
+              icon="mdi-content-save-outline"
+            ></v-btn>
+            <v-btn
+              :disabled="saving"
+              @click="editting = null"
+              class="pa-0"
+              density="comfortable"
+              size="small"
+              variant="tonal"
+              color="primary"
+              rounded="xl"
+              icon="mdi-close-circle-outline"
+            ></v-btn>
+          </div>
+        </template>
+      </v-textarea>
+    </v-card-text>
+    <v-card-text v-else>
       {{ suggestion.description }}
       <div
         v-if="authStore.principal?.id === suggestion.userId"
         class="inline-block float-end"
       >
         <v-chip
-          @click=""
+          @click="editting = 'description'"
           size="small"
           variant="text"
           prepend-icon="mdi-pen"
@@ -89,6 +128,16 @@
       <span class="text-sm">{{ reactions?.dislike }}</span>
       <v-spacer />
       <v-btn
+        :disabled="deleting || !(authStore.principal?.id === suggestion.userId || authStore.isAdmin)"
+        @click="deleteSuggestion"
+        class="pa-0"
+        density="comfortable"
+        size="small"
+        color="primary"
+        rounded="xl"
+        icon="mdi-trash-can-outline"
+      ></v-btn>
+      <v-btn
         :disabled="!authStore.isAdmin"
         rounded="xl"
         class=""
@@ -121,11 +170,13 @@ import {
   SuggestionReactions,
   SuggestionToggleAction,
 } from "@/lib/types";
+import { useAlertStore } from "@/stores/store.alerts";
 import { useAuthStore } from "@/stores/store.auth";
 import { useSuggestionStore } from "@/stores/store.suggestions";
 
 const suggestionStore = useSuggestionStore();
 const authStore = useAuthStore();
+const { pushAlert } = useAlertStore();
 
 const handleRequest = useAPI();
 
@@ -137,8 +188,37 @@ const props = defineProps<{
 
 const editting = ref<string | null>(null);
 const edittingValue = ref("");
+const saving = ref(false);
+const deleting = ref(false);
 
-const editSuggestion = () => {};
+const editSuggestion = async () => {
+  if (editting.value) {
+    saving.value = true;
+    const success = await suggestionStore.update(props.suggestion.id, {
+      [editting.value]: edittingValue.value,
+    });
+    saving.value = false;
+    if (success) {
+      editting.value = null;
+    } else {
+      pushAlert({
+        alert: {
+          status: "success",
+          message: "Failed to update suggestion. Please try again later!",
+        },
+      });
+    }
+  }
+};
+
+const deleteSuggestion = async () => {
+  deleting.value = true;
+  const response = await suggestionStore.delete(props.suggestion.id);
+  deleting.value = false;
+  pushAlert({
+    alert: response,
+  });
+};
 
 const toggle = async (value: SuggestionToggleAction) => {
   await suggestionStore.toggle(props.suggestion, value);

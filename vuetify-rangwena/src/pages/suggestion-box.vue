@@ -1,7 +1,7 @@
 <template>
-  <div class="p-2">
+  <div class="">
     <!-- Header -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 pt-2 px-2">
       <v-text-field
         rounded="xl"
         density="compact"
@@ -9,7 +9,7 @@
         placeholder="Search suggestions"
         clearable
         class=""
-        prepend-inner-icon="mdi-search"
+        prepend-inner-icon="mdi-selection-search"
         variant="solo-filled"
       >
         <template #append-inner>
@@ -45,24 +45,30 @@
     </div>
 
     <!-- Suggestion Cards -->
-    <v-row v-if="filteredSuggestions.length" class="pe-4 pb-16">
-      <v-col
-        v-for="suggestion in filteredSuggestions"
-        :key="suggestion.id"
-        cols="12"
-        sm="6"
-        md="4"
-        class="pa-0"
+    <div class="pl-3 pb-12">
+      <div
+        v-if="filteredSuggestions.length"
+        v-masonry
+        transition-duration="0.3s"
+        item-selector=".item"
+        class=""
       >
-        <suggestion-card
-          :suggestion="suggestion"
-          rounded="xl"
-          class="ms-4 mb-2"
-        ></suggestion-card>
-      </v-col>
-    </v-row>
-    <div v-else>
-      <h3>No results found!</h3>
+        <div
+          v-masonry-tile
+          v-for="suggestion in filteredSuggestions"
+          :key="suggestion.id"
+          class="item masonry-item pb-3 pr-3"
+        >
+          <suggestion-card
+            :suggestion="suggestion"
+            rounded="lg"
+            class=""
+          ></suggestion-card>
+        </div>
+      </div>
+      <div v-else>
+        <h3>No results found!</h3>
+      </div>
     </div>
 
     <!-- Add Suggestion Dialog -->
@@ -104,6 +110,13 @@ onMounted(() => {
   suggestionStore.fetchSuggestions();
 });
 </script>
+
+<style lang="css" scoped>
+.masonry-item {
+  @apply w-full md:w-1/2 lg:w-1/3;
+}
+</style>
+
 <route lang="yaml">
 meta:
   layout: index

@@ -64,11 +64,34 @@ export class SuggestionsService {
     return await this.ensureExistsById(id);
   }
 
-  update(id: string, data: Prisma.SuggestionUpdateInput) {
-    return this.prisma.suggestion.update({
-      where: { id },
+  async update(suggestionId: string, data: Prisma.SuggestionUpdateInput) {
+    const suggestion = await this.prisma.suggestion.update({
+      where: { id: suggestionId },
       data: data,
+      include: {
+        user: true,
+      },
     });
+    const {
+      id,
+      title,
+      description,
+      resolved,
+      userId,
+      createdAt,
+      updatedAt,
+      user,
+    } = suggestion;
+    return {
+      id,
+      title,
+      description,
+      resolved,
+      userId,
+      createdAt,
+      updatedAt,
+      user: user.username,
+    };
   }
 
   async toggle(
@@ -159,6 +182,7 @@ export class SuggestionsService {
   async remove(id: string) {
     await this.prisma.suggestion.delete({
       where: { id },
+      
     });
     return null;
   }

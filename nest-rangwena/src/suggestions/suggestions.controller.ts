@@ -64,11 +64,11 @@ export class SuggestionsController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateSuggestionDto: UpdateSuggestionDto,
   ) {
-    return this.suggestionsService.update(
+    return await this.suggestionsService.update(
       id,
       updateSuggestionDto as Prisma.SuggestionUpdateInput,
     );
