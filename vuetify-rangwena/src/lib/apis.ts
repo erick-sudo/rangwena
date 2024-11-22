@@ -19,4 +19,8 @@ export const APIS = {
     likes: `${apiHost}/suggestions/<:suggestionId>/toggle`,
     countReactions: `${apiHost}/suggestions/<:suggestionId>/count-reactions`,
   },
+  activities: {
+    index: `${apiHost}/activities`,
+    retrieve: `${apiHost}/activities/<:activityId>`,
+  },
 };

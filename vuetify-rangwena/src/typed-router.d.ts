@@ -22,6 +22,7 @@ declare module 'vue-router/auto-routes' {
     '/activities': RouteRecordInfo<'/activities', '/activities', Record<never, never>, Record<never, never>>,
     '/chat': RouteRecordInfo<'/chat', '/chat', Record<never, never>, Record<never, never>>,
     '/membership': RouteRecordInfo<'/membership', '/membership', Record<never, never>, Record<never, never>>,
+    '/polls': RouteRecordInfo<'/polls', '/polls', Record<never, never>, Record<never, never>>,
     '/request-password-reset': RouteRecordInfo<'/request-password-reset', '/request-password-reset', Record<never, never>, Record<never, never>>,
     '/reset-password': RouteRecordInfo<'/reset-password', '/reset-password', Record<never, never>, Record<never, never>>,
     '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>>,

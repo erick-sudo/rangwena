@@ -119,3 +119,13 @@ export interface SuggestionReactions {
   dislike: boolean;
   me: "like" | "dislike" | null;
 }
+
+export interface CreateActivity {
+  title: string;
+  description: string;
+  date: string;
+}
+
+export interface Activity extends Entity, CreateActivity, TimeStamps {
+  completed: boolean;
+}

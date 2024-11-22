@@ -115,6 +115,13 @@
           color="primary"
         ></v-list-item>
         <v-list-item
+          prepend-icon="mdi-vote-outline"
+          title="Polls"
+          value="polls"
+          to="polls"
+          color="primary"
+        ></v-list-item>
+        <v-list-item
           prepend-icon="mdi-message-outline"
           title="Suggestion Box"
           value="suggestion-box"
