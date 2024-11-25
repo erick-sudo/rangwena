@@ -29,7 +29,13 @@
             </accordion>
           </v-card>
         </div>
-        <div class="p-12 border rounded mt-2" v-else>
+        <div class="p-12 border rounded mt-2 flex items-center gap-3" v-else>
+          <v-btn
+            @click="tab = 'previous'"
+            variant="tonal"
+            color="primary"
+            icon="mdi-arrow-right-thin"
+          ></v-btn>
           <p>No active polls...</p>
         </div>
       </v-tabs-window-item>
@@ -49,7 +55,13 @@
           >
           </closed-poll>
         </v-list>
-        <div class="p-12 border rounded mt-2" v-else>
+        <div class="p-12 border rounded mt-2 flex items-center gap-3" v-else>
+          <v-btn
+            @click="tab = 'active'"
+            variant="tonal"
+            color="primary"
+            icon="mdi-arrow-left-thin"
+          ></v-btn>
           <p>No past polls...</p>
         </div>
       </v-tabs-window-item>
@@ -65,7 +77,7 @@ import { useAuthStore } from "@/stores/store.auth";
 import { useWsStore } from "@/stores/store.ws";
 
 const wsStore = useWsStore();
-const tab = ref(null);
+const tab = ref<string | null>(null);
 const authStore = useAuthStore();
 
 onMounted(() => {

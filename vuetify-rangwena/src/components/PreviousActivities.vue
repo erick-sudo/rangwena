@@ -21,27 +21,36 @@
             <v-img
               height="100"
               cover
-              src="http://192.168.180.148:8000/gnome/xfce-leaves.svg"
+              src="http://192.168.158.148:8000/gnome/xfce-leaves.svg"
             ></v-img>
             <div class="mt-2">
               {{ activity.description }}
             </div>
-            <div class="mt-2">
-              Date:
-              <em class="text-secondary ms-2">{{
-                new Date(activity.date).toDateString()
-              }}</em>
+            <div class="my-2 flex items-center">
+              <span
+                >Date:
+                <em class="text-secondary ms-2">{{
+                  new Date(activity.date).toDateString()
+                }}</em></span
+              >
+              <span class="grow"></span>
+              <v-chip
+                prepend-icon="mdi-check-decagram"
+                variant="tonal"
+                color="primary"
+                v-if="!authstore.isAdmin"
+                >Completed</v-chip
+              >
             </div>
           </v-card-text>
 
-          <v-card-actions class="pa-0">
+          <v-card-actions v-if="authstore.isAdmin" class="pa-0">
             <v-checkbox-btn
               @update:model-value="(v) => emit('toggle', activity, v)"
               :model-value="activity.completed"
               color="primary"
               inline
               density="comfortable"
-              v-if="authstore.isAdmin"
             ></v-checkbox-btn>
             <em>Mark as incomplete</em>
             <v-spacer></v-spacer>
@@ -51,7 +60,7 @@
               density="comfortable"
               icon
               color="primary"
-              @click=""
+              @click="emit('edit', activity)"
             >
               <v-icon size="small">mdi-pencil-outline</v-icon>
             </v-btn>

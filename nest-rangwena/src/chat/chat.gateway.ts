@@ -19,7 +19,7 @@ import { UsersService } from 'src/users/users.service';
     origin: [
       'http://localhost:4000',
       'http://192.168.180.148:4000',
-      'http://192.168.127.148:4000',
+      'http://192.168.158.148:4000',
     ],
   },
 })

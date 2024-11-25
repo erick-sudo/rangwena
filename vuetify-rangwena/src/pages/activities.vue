@@ -21,7 +21,7 @@
         </v-toolbar-items>
 
         <template #extension>
-          <v-tabs density="compact" v-model="tab" align-tabs="title">
+          <v-tabs density="compact" v-model="tab">
             <v-tab text="planned" value="planned"></v-tab>
             <v-tab text="previous" value="previous"></v-tab>
             <v-tab

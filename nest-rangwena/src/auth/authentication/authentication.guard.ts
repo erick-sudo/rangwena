@@ -42,10 +42,22 @@ export class Principal {
   id: string;
 }
 
+export class Initials {
+  @Expose()
+  firstName: string;
+
+  @Expose()
+  lastName: string;
+
+  @Expose()
+  phoneNumber: string;
+}
+
 // Authentication context
 export class Authentication {
   #authorities: Array<GrantedAuthority>;
   #principal: Principal;
+  #initials: Initials;
 
   private constructor() {
     this.#authorities = [];
@@ -65,12 +77,21 @@ export class Authentication {
     return this;
   }
 
+  setInitials(firstName: string, lastName: string, phoneNumber: string) {
+    this.#initials = { firstName, lastName, phoneNumber };
+    return this;
+  }
+
   get authorities() {
     return this.#authorities;
   }
 
   get principal() {
     return this.#principal;
+  }
+
+  get initials() {
+    return this.#initials;
   }
 }
 
@@ -145,7 +166,8 @@ export class AuthenticationGuard implements CanActivate {
         email: user.email,
         id: user.id,
         username: user.username,
-      });
+      })
+      .setInitials(user.firstName, user.lastName, user.phoneNumber);
 
     return true;
   }

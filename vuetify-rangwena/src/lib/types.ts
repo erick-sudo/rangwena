@@ -9,6 +9,12 @@ export interface Principal extends Entity {
   username: string;
 }
 
+export interface Initials {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+}
+
 export interface TimeStamps {
   createdAt: string;
   updatedAt: string;
@@ -24,6 +30,7 @@ export type Role = GrantedAuthority;
 export interface AuthenticationContext {
   principal: Principal;
   authorities: GrantedAuthority[];
+  initials: Initials;
 }
 
 export interface RUser extends Entity, TimeStamps {

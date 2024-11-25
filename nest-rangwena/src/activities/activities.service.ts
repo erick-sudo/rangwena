@@ -22,7 +22,6 @@ export class ActivitiesService {
   }
 
   async update(id: string, updateActivityDto: UpdateActivityDto) {
-    console.log(id, updateActivityDto);
     return await this.prisma.activity.update({
       where: { id },
       data: updateActivityDto,

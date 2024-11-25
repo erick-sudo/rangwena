@@ -84,6 +84,7 @@ export const useSuggestionStore = defineStore("suggestions", {
         args: [APIS.suggestions.index, { ...payload, user }],
       }).then((res) => {
         if (res.status === "ok") {
+          this.fetchSuggestions()
           return {
             status: "success",
             message: res.result?.message || "Thank you for your suggestion.",

@@ -15,8 +15,14 @@ export const useAuthStore = defineStore("auth", {
     auth: null as AuthenticationContext | null,
   }),
   getters: {
+    loggedIn(state) {
+      return !!state.auth;
+    },
     principal(state) {
       return state.auth?.principal;
+    },
+    initials(state) {
+      return state.auth?.initials;
     },
     isAdmin(state) {
       return state.auth?.authorities.some((a) => a.name === "ROLE_ADMIN");
@@ -68,7 +74,7 @@ export const useAuthStore = defineStore("auth", {
         if (res.status === "ok") {
           this.clear();
           return {
-            status: "success",
+            status: "error",
             message: "Signed out successfully.",
           };
         }

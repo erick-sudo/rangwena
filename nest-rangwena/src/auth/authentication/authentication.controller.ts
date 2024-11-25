@@ -63,6 +63,7 @@ export class AuthenticationController {
     return {
       principal: req.authentication?.principal,
       authorities: req.authentication?.authorities,
+      initials: req.authentication?.initials,
     };
   }
 

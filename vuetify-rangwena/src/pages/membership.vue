@@ -40,12 +40,10 @@
       <v-card-text>
         <v-list>
           <v-list-item v-for="member in members" :key="member.id">
-            <v-list-item-content>
-              <v-list-item-title>{{ member.name }}</v-list-item-title>
-              <v-list-item-subtitle>
-                {{ member.email }} - {{ member.membershipType }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
+            <v-list-item-title>{{ member.name }}</v-list-item-title>
+            <v-list-item-subtitle>
+              {{ member.email }} - {{ member.membershipType }}
+            </v-list-item-subtitle>
             <v-list-item-action>
               <v-btn icon color="red" @click="removeMember(member.id)">
                 <v-icon>mdi-delete</v-icon>

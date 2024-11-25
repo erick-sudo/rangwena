@@ -1,20 +1,6 @@
 <template>
   <v-list-item>
-    <template #append>
-      <v-btn
-        stacked
-        :disabled="!authStore.isAdmin"
-        @click="updatePoll({ closed: false })"
-        rounded="xl"
-        variant="tonal"
-        density="comfortable"
-        class=""
-        prepend-icon="mdi-ballot-recount-outline"
-        color="primary"
-      >
-        <span>Reopen</span>
-      </v-btn>
-    </template>
+    <template #append> </template>
     <v-list-item-subtitle>{{ poll.title }} </v-list-item-subtitle>
     <v-card-text class="ps-0 pe-0">
       <div>{{ poll.description }}</div>
@@ -29,6 +15,20 @@
         >
       </div>
     </v-card-text>
+    <v-list-item-action>
+      <v-btn
+        v-if="authStore.isAdmin"
+        @click="updatePoll({ closed: false })"
+        rounded="xl"
+        variant="tonal"
+        density="comfortable"
+        class=""
+        prepend-icon="mdi-ballot-recount-outline"
+        color="primary"
+      >
+        <span>Reopen</span>
+      </v-btn>
+    </v-list-item-action>
   </v-list-item>
 </template>
 <script setup lang="ts">

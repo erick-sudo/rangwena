@@ -21,10 +21,10 @@
             <v-img
               height="100"
               cover
-              src="http://192.168.180.148:8000/gnome/xfce-leaves.svg"
+              src="http://192.168.158.148:8000/gnome/xfce-leaves.svg"
             ></v-img>
             <div class="mt-2">{{ activity.description }}</div>
-            <div class="mt-2">
+            <div class="my-2">
               Date:
               <em class="text-secondary ms-2">{{
                 new Date(activity.date).toDateString()
@@ -32,20 +32,18 @@
             </div>
           </v-card-text>
 
-          <v-card-actions class="pa-0">
+          <v-card-actions v-if="authstore.isAdmin" class="pa-0">
             <v-checkbox-btn
               @update:model-value="(v) => emit('toggle', activity, v)"
               :model-value="activity.completed"
               color="primary"
               inline
               density="comfortable"
-              v-if="authstore.isAdmin"
             ></v-checkbox-btn>
             <em>Mark as completed</em>
             <v-spacer></v-spacer>
             <v-btn
               size="small"
-              v-if="authstore.isAdmin"
               variant="tonal"
               density="comfortable"
               icon
@@ -57,7 +55,6 @@
 
             <v-btn
               size="small"
-              v-if="authstore.isAdmin"
               @click="emit('delete', activity)"
               density="comfortable"
               icon
