@@ -123,9 +123,34 @@ export interface SuggestionReactions {
 export interface CreateActivity {
   title: string;
   description: string;
-  date: string;
+  date: Date;
 }
 
 export interface Activity extends Entity, CreateActivity, TimeStamps {
   completed: boolean;
+}
+
+export type PollTally = Record<string, number>;
+
+export interface Poll extends Entity {
+  title: string;
+  description: string;
+  choices: PollChoice[];
+  totalNumberOfvoters: number;
+  closed: boolean;
+}
+
+export interface PollChoice extends Entity {
+  value: string;
+  pollId?: string;
+}
+
+export interface LoggedInUserPollStatus {
+  voted: boolean;
+}
+
+export interface CreatePoll {
+  title: string;
+  description: string;
+  totalNumberOfvoters: number;
 }

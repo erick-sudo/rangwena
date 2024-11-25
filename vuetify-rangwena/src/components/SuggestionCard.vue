@@ -94,7 +94,7 @@
           size="small"
           variant="text"
           prepend-icon="mdi-pen"
-          class="border"
+          class="border mt-2"
           >edit</v-chip
         >
       </div>

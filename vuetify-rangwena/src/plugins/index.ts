@@ -12,6 +12,8 @@ import { VueMasonryPlugin } from "vue-masonry";
 
 import "@/styles/tailwind.css";
 
+import "@/styles/index.css";
+
 // Types
 import type { App } from "vue";
 

@@ -23,4 +23,11 @@ export const APIS = {
     index: `${apiHost}/activities`,
     retrieve: `${apiHost}/activities/<:activityId>`,
   },
+  polls: {
+    index: `${apiHost}/polls`,
+    retrieve: `${apiHost}/polls/<:pollId>`,
+    currentUserStatus: `${apiHost}/polls/<:pollId>/current-user-status`,
+    castVote: `${apiHost}/polls/<:pollId>/cast-vote`,
+    tally: `${apiHost}/polls/<:pollId>/tally`,
+  },
 };

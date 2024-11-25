@@ -1,6 +1,7 @@
+import { AlertResponse } from "@/components/ui.definitions";
 import useAPI from "@/composables/useAPI";
 import { APIS } from "@/lib/apis";
-import { axiosGet } from "@/lib/lib.axios";
+import { axiosDelete, axiosGet, axiosPatch, axiosPost } from "@/lib/lib.axios";
 import socket from "@/lib/socket";
 import {
   Principal,
@@ -12,6 +13,10 @@ import {
   RawWSChatMessage,
   RUser,
   Conversations,
+  Poll,
+  LoggedInUserPollStatus,
+  PollTally,
+  CreatePoll,
 } from "@/lib/types";
 import { defineStore } from "pinia";
 
@@ -24,6 +29,7 @@ export const useWsStore = defineStore("ws-chat", {
     _selectedConversationKey: undefined as string | undefined,
     _onlineUsers: [] as Entity[],
     _online: null as boolean | null,
+    _polls: [] as Poll[],
   }),
   getters: {
     online(state) {
@@ -41,10 +47,152 @@ export const useWsStore = defineStore("ws-chat", {
     selectedConversationKey(state) {
       return state._selectedConversationKey;
     },
+    activePolls(state) {
+      return state._polls.filter((p) => !p.closed);
+    },
+    previousPolls(state) {
+      return state._polls.filter((p) => p.closed);
+    },
   },
   actions: {
+    async fetchPolls() {
+      await handleRequest<Poll[]>({
+        func: axiosGet,
+        args: [APIS.polls.index],
+      }).then((res) => {
+        if (res.status === "ok" && res.result) {
+          this._polls = res.result;
+        }
+      });
+    },
+    async fetchTally(pollId: string): Promise<PollTally | null> {
+      return await handleRequest<PollTally>({
+        func: axiosGet,
+        args: [APIS.polls.tally.replace("<:pollId>", pollId)],
+      }).then((res) => {
+        if (res.status === "ok" && res.result) {
+          return res.result;
+        }
+        return null;
+      });
+    },
+    async createPoll(payload: any): Promise<AlertResponse> {
+      return await handleRequest<Poll>({
+        func: axiosPost,
+        args: [APIS.polls.index, payload],
+      }).then((res) => {
+        if (res.status === "ok" && res.result) {
+          this._polls.push(res.result);
+          return {
+            status: "success",
+            message: "Successfully created a new poll.",
+          };
+        }
+
+        return {
+          status: "error",
+          message:
+            res.errors?.message ||
+            "Sorry! an error occured while creating poll.",
+        };
+      });
+    },
+    async updatePoll(pollId: string, payload: any): Promise<AlertResponse> {
+      return await handleRequest<Poll>({
+        func: axiosPatch,
+        args: [APIS.polls.retrieve.replace("<:pollId>", pollId), payload],
+      }).then((res) => {
+        if (res.status === "ok" && res.result) {
+          const indexOfUpdatedPoll = this._polls.findIndex(
+            (p) => p.id === pollId
+          );
+          this._polls.splice(indexOfUpdatedPoll, 1, res.result);
+          return {
+            status: "info",
+            message: "Successfully updated poll.",
+          };
+        }
+
+        return {
+          status: "error",
+          message:
+            res.errors?.message ||
+            "Sorry! an error occured while updating poll.",
+        };
+      });
+    },
+    async deletePoll(pollId: string): Promise<AlertResponse> {
+      return await handleRequest<Poll>({
+        func: axiosDelete,
+        args: [APIS.polls.retrieve.replace("<:pollId>", pollId)],
+      }).then((res) => {
+        if (res.status === "ok") {
+          const indexOfDeletedPoll = this._polls.findIndex(
+            (p) => p.id === pollId
+          );
+          if (indexOfDeletedPoll >= 0) {
+            this._polls.splice(indexOfDeletedPoll, 1);
+            return {
+              status: "warning",
+              message: "Successfully deleted poll",
+            };
+          }
+        }
+
+        return {
+          status: "error",
+          message:
+            res.errors?.message ||
+            "Sorry! an error occured while deleting poll.",
+        };
+      });
+    },
+    async castVote(
+      pollId: string,
+      selectedChoice: string
+    ): Promise<AlertResponse> {
+      return await handleRequest<Poll>({
+        func: axiosPost,
+        args: [
+          APIS.polls.castVote.replace("<:pollId>", pollId),
+          { choice: selectedChoice },
+        ],
+      }).then((res) => {
+        if (res.status === "ok" && res.result) {
+          const indexOfCastPoll = this._polls.findIndex((p) => p.id === pollId);
+          if (indexOfCastPoll >= 0) {
+            this._polls.splice(indexOfCastPoll, 1, res.result);
+            return {
+              status: "success",
+              message: "Thank you for casting your vote.",
+            };
+          }
+        }
+
+        return {
+          status: "error",
+          message:
+            res.errors?.message ||
+            "Sorry! an error occured while casting your vote please try again later.",
+        };
+      });
+    },
+    async fetchVoteStatus(
+      pollId: string
+    ): Promise<LoggedInUserPollStatus | null> {
+      return await handleRequest<LoggedInUserPollStatus>({
+        func: axiosGet,
+        args: [APIS.polls.currentUserStatus.replace("<:pollId>", pollId)],
+      }).then((res) => {
+        if (res.status === "ok" && res.result) {
+          return res.result;
+        }
+
+        return null;
+      });
+    },
     isOnline(id: string) {
-      return this.onlineUsers.some((usr) => usr.id === id);
+      return this._onlineUsers.some((usr) => usr.id === id);
     },
     initConversations() {
       this._conversations = JSON.parse(
@@ -111,6 +259,14 @@ export const useWsStore = defineStore("ws-chat", {
       // Detect disconnecting
       socket.on("disconnect", () => {
         this._online = false;
+      });
+
+      // Subscribe to new vote casts
+      socket.on("poll:vote:new", (poll: Poll) => {
+        const indexOfCastPoll = this._polls.findIndex((p) => p.id === poll.id);
+        if (indexOfCastPoll >= 0) {
+          this._polls.splice(indexOfCastPoll, 1, poll);
+        }
       });
 
       // Subscribe to an anonymous sender

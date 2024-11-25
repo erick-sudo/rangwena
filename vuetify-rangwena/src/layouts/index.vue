@@ -1,6 +1,6 @@
 <template>
   <v-layout full-height>
-    <v-app-bar density="compact" elevation="0" class="border-b">
+    <v-app-bar name="app-bar" density="compact" elevation="0" class="border-b">
       <template v-slot:prepend>
         <v-app-bar-nav-icon
           @click="drawer = !drawer"
@@ -164,11 +164,12 @@
     </v-navigation-drawer>
 
     <v-main class="min-h-screen">
-      <router-view #default="{ Component, route }">
+      <!-- <router-view #default="{ Component, route }">
         <transition>
           <component :is="Component" :key="route" />
         </transition>
-      </router-view>
+      </router-view> -->
+      <router-view />
     </v-main>
 
     <!-- <AppFooter /> -->

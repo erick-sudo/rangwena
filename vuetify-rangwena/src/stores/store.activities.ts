@@ -2,7 +2,7 @@ import { AlertResponse } from "@/components/ui.definitions";
 import useAPI from "@/composables/useAPI";
 import { APIS } from "@/lib/apis";
 import { axiosDelete, axiosGet, axiosPatch, axiosPost } from "@/lib/lib.axios";
-import { Activity, CreateActivity } from "@/lib/types";
+import { Activity } from "@/lib/types";
 import { defineStore } from "pinia";
 
 const handleRequest = useAPI();
@@ -29,7 +29,7 @@ export const useActivityStore = defineStore("activities", {
         }
       });
     },
-    async update(activityId: string, payload: Record<string, string>) {
+    async update(activityId: string, payload: any) {
       return await handleRequest<Activity>({
         func: axiosPatch,
         args: [
@@ -72,16 +72,16 @@ export const useActivityStore = defineStore("activities", {
         };
       });
     },
-    async addActivity(payload: CreateActivity): Promise<AlertResponse> {
-      return await handleRequest<any>({
+    async addActivity(payload: any): Promise<AlertResponse> {
+      return await handleRequest({
         func: axiosPost,
-        args: [APIS.activities.index],
-      }).then((res) => {
+        args: [APIS.activities.index, payload],
+      }).then(async (res) => {
         if (res.status === "ok") {
+          await this.fetchActivities();
           return {
             status: "success",
-            message:
-              res.result?.message || "Successfully created a new activity.",
+            message: "Successfully created a new activity.",
           };
         }
         return {

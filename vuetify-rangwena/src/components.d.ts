@@ -7,12 +7,17 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Accordion: typeof import('./components/Accordion.vue')['default']
+    AccordionGroup: typeof import('./components/AccordionGroup.vue')['default']
+    ActivePoll: typeof import('./components/ActivePoll.vue')['default']
     AlertsHost: typeof import('./components/AlertsHost.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     ChatMessages: typeof import('./components/ChatMessages.vue')['default']
+    ClosedPoll: typeof import('./components/ClosedPoll.vue')['default']
     ConversationList: typeof import('./components/ConversationList.vue')['default']
     ConversationListItem: typeof import('./components/ConversationListItem.vue')['default']
     ConversationScreen: typeof import('./components/ConversationScreen.vue')['default']
+    CreatePollForm: typeof import('./components/CreatePollForm.vue')['default']
     DisplayObject: typeof import('./components/DisplayObject.vue')['default']
     ForgotPassword: typeof import('./components/auth/ResetPassword.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']

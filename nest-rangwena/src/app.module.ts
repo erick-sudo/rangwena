@@ -19,6 +19,8 @@ import { MailModule } from './mail/mail.module';
 import { ChatGateway } from './chat/chat.gateway';
 import { RedisModule } from './redis/redis.module';
 import { SuggestionsModule } from './suggestions/suggestions.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { PollsModule } from './polls/polls.module';
 
 @Module({
   imports: [
@@ -69,6 +71,8 @@ import { SuggestionsModule } from './suggestions/suggestions.module';
     MailModule,
     RedisModule,
     SuggestionsModule,
+    ActivitiesModule,
+    PollsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -24,7 +24,8 @@ export default createVuetify({
           primaryContainer: colors.deepOrange.darken3,
           primaryVariant: colors.deepOrange.lighten3,
           onPrimaryContainer: colors.deepOrange.lighten4,
-          secondary: colors.grey.darken2
+          secondary: colors.grey.darken2,
+          // error: colors.red.darken1,
         },
       },
     },

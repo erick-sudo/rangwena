@@ -26,7 +26,8 @@ model User {
   userRoles       UserRole[]
   OneTimePassword OneTimePassword[]
   suggestions     Suggestion[]
-  reactions   SuggestionReaction[]
+  reactions       SuggestionReaction[]
+  votes           Vote[]
 }
 
 model Role {
@@ -70,4 +71,43 @@ model SuggestionReaction {
   userId        String
   suggestion    Suggestion  @relation(fields: [suggestionId], references: [id], onDelete: Cascade)
   suggestionId  String
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completed   Boolean  @default(false)
+}
+
+model Poll {
+  id                    String   @id @default(uuid())
+  title                 String
+  description           String
+  totalNumberOfvoters   Int
+  closed                Boolean  @default(false)
+  choices               PollChoice[]
+  votes                 Vote[]
+}
+
+model PollChoice {
+  id      String   @id @default(uuid())
+  value   String
+  poll    Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId  String
+  votes   Vote[]
+}
+
+model Vote {
+  id          String     @id @default(uuid())
+  poll        Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  choice      PollChoice @relation(fields: [choiceId], references: [id], onDelete: Cascade)
+  choiceId    String
 }
