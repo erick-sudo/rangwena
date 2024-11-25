@@ -48,7 +48,6 @@
 import { useAuthStore } from "@/stores/store.auth";
 import { useWsStore } from "@/stores/store.ws";
 
-const form = useTemplateRef("form");
 const formValid = ref(false);
 const wsStore = useWsStore();
 const text = ref("");

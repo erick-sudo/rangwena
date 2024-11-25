@@ -16,7 +16,6 @@ import {
   Poll,
   LoggedInUserPollStatus,
   PollTally,
-  CreatePoll,
 } from "@/lib/types";
 import { defineStore } from "pinia";
 
