@@ -1,6 +1,10 @@
 <template>
   <v-layout full-height>
-    <template v-if="authStore.loggedIn">
+    <template v-if="!authStore.pendingApproval">
+      <account-approval></account-approval>
+    </template>
+
+    <template v-else-if="authStore.loggedIn">
       <application-bar
         @sign-out="handleSignout"
         @toggle-drawer="drawer = !drawer"

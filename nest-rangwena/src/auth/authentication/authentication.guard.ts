@@ -51,6 +51,9 @@ export class Initials {
 
   @Expose()
   phoneNumber: string;
+
+  @Expose()
+  approved: boolean;
 }
 
 // Authentication context
@@ -77,8 +80,13 @@ export class Authentication {
     return this;
   }
 
-  setInitials(firstName: string, lastName: string, phoneNumber: string) {
-    this.#initials = { firstName, lastName, phoneNumber };
+  setInitials(
+    firstName: string,
+    lastName: string,
+    phoneNumber: string,
+    approved: boolean,
+  ) {
+    this.#initials = { firstName, lastName, phoneNumber, approved };
     return this;
   }
 
@@ -167,7 +175,12 @@ export class AuthenticationGuard implements CanActivate {
         id: user.id,
         username: user.username,
       })
-      .setInitials(user.firstName, user.lastName, user.phoneNumber);
+      .setInitials(
+        user.firstName,
+        user.lastName,
+        user.phoneNumber,
+        user.approved,
+      );
 
     return true;
   }

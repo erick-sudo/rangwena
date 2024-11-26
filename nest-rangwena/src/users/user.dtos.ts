@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsPhoneNumber,
   IsStrongPassword,
@@ -33,6 +34,11 @@ export class CreateUserDto {
   confirmPassword: string;
 }
 
+export class CreateUnApprovedUserDto extends OmitType(CreateUserDto, [
+  'firstName',
+  'lastName',
+]) {}
+
 export class UpdateUserDto extends PartialType(
   OmitType(CreateUserDto, [
     'password',
@@ -60,10 +66,43 @@ export class PasswordResetDto {
   @IsStrongPassword({ minLength: 8 }, { message: 'weak password' })
   newPassword: string;
 
-  @ValidateIf((o, v) => !!o.password && !!o.confirmPassword)
-  @IsMatching('password', { message: 'passwords do not match' })
+  @ValidateIf((o, _v) => !!o.newPassword && !!o.confirmNewPassword)
+  @IsMatching('newPassword', { message: 'passwords do not match' })
   confirmNewPassword: string;
 
   @Length(6, 6, { message: 'otp must be 6 characters' })
   otp: string;
+}
+
+export enum OtpRequestReason {
+  PASSWORD_RESET = 'password-reset',
+  ACCOUNT_APPROVAL = 'account-approval',
+}
+
+export class PublicOtpRequest {
+  @IsEnum(OtpRequestReason)
+  reason: OtpRequestReason;
+
+  @IsNotEmpty({
+    message: 'identiy is required',
+  })
+  identity: string;
+}
+
+export class AuthenticatedOtpRequest extends OmitType(PublicOtpRequest, [
+  'identity',
+]) {}
+
+export enum UniqueUserFields {
+  username = 'username',
+  email = 'email',
+  phone = 'phoneNumber',
+}
+
+export class UniqueCheckDto {
+  @IsEnum(UniqueUserFields)
+  field: UniqueUserFields;
+
+  @IsNotEmpty()
+  value: string;
 }

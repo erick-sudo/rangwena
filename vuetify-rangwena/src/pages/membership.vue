@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <v-container>
     <v-card elevation="3" class="mb-5">
       <v-card-title>Membership Registration</v-card-title>
@@ -54,9 +54,9 @@
       </v-card-text>
     </v-card>
   </v-container>
-</template>
+</template> -->
 
-<script lang="ts" setup>
+<!-- <script lang="ts" setup>
 interface Member {
   id: number;
   name: string;
@@ -89,14 +89,10 @@ const removeMember = (id: number) => {
   const index = members.findIndex((member) => member.id === id);
   if (index !== -1) members.splice(index, 1);
 };
-</script>
-
-<style scoped>
-.mb-5 {
-  margin-bottom: 20px;
-}
-</style>
-
+</script> -->
+<template>
+  <under-construction></under-construction>
+</template>
 <route lang="yaml">
 meta:
   layout: index

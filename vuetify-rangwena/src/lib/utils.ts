@@ -24,8 +24,23 @@ export function useUUID(): string {
   return `${Date.now()}#${Math.random() * 10000}`;
 }
 
-export function isStrongPassword(passwd: string): boolean {
-  const patterns = [/[a-z]+/, /[A-Z]+/, /[0-9]+/, /[!#@?]+/];
+const patterns = [/[a-z]+/, /[A-Z]+/, /[0-9]+/, /[!#@?]+/];
 
-  return !!passwd && !patterns.some((pattern) => !!!passwd.match(pattern));
+const passwordStrengths = ["", "weak", "fair", "strong", "very strong"];
+
+export function gradePassword(passwd: string): {
+  strength: number;
+  desc: string;
+} {
+  const strength = !!passwd
+    ? patterns.map((pattern) => !!passwd.match(pattern)).filter((p) => p).length
+    : 0;
+  return {
+    strength,
+    desc: passwordStrengths[strength],
+  };
+}
+
+export function isStrongPassword(passwd: string): boolean {
+  return gradePassword(passwd).strength === patterns.length;
 }

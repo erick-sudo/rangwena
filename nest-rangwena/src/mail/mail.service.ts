@@ -1,7 +1,31 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
+import { SentMessageInfo } from 'nodemailer';
+
+export type HBSTemplates = 'password-reset' | 'otp-request';
+
+export type Email = string;
+
+export interface MailOptions {
+  subject: string;
+  template: HBSTemplates;
+  to: Email;
+  from?: Email;
+}
+
+export interface HBSContext {}
+
+export interface PasswordResetRequestHBSContext {
+  name: string;
+  uiURL: string;
+  otp: string;
+}
+
+export interface OtpRequestHBSContext {
+  name: string;
+  otp: string;
+}
 
 @Injectable()
 export class MailService {
@@ -10,28 +34,42 @@ export class MailService {
     private readonly configService: ConfigService,
   ) {}
 
-  // Responding to a password reset request
-  async respondToPasswordResetRequest(user: User) {
-    const host = this.configService.get<string>('VUE_FRONTEND');
-    const path = '/reset-password';
-    const url = `${host}${path}`;
-
+  async send(spec: {
+    options: MailOptions;
+    context: HBSContext;
+  }): Promise<SentMessageInfo> {
     return await this.mailerService
       .sendMail({
-        to: user.email,
-        // from: '"Support Team" <support.2013@rangwena.com>',
-        subject: 'Reset your password',
-        template: 'password-reset',
-        context: {
-          name: user.firstName,
-          url: url,
-          otp: 123456,
-        },
+        to: spec.options.to,
+        from: spec.options.from || this.configService.get<string>('MAIL_FROM'),
+        subject: spec.options.subject,
+        template: spec.options.template,
+        context: spec.context,
       })
-      .catch((e) => {
+      .catch(() => {
         throw new InternalServerErrorException(
           'Sorry! An internal server error occured. Please try again later.',
         );
       });
+  }
+
+  async sendPasswordResetRequestMail(spec: {
+    options: MailOptions;
+    context: PasswordResetRequestHBSContext;
+  }) {
+    return await this.send({
+      options: spec.options,
+      context: spec.context,
+    });
+  }
+
+  async sendOtpRequestMail(spec: {
+    options: MailOptions;
+    context: OtpRequestHBSContext;
+  }) {
+    return await this.send({
+      options: spec.options,
+      context: spec.context,
+    });
   }
 }

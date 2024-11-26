@@ -43,6 +43,7 @@ async function main() {
       phoneNumber: '+123456789',
       createdAt: new Date(),
       passwordDigest: hashedPassword('Password123@'),
+      approved: true,
     },
   });
 
@@ -63,14 +64,13 @@ async function main() {
     'Quincy;Linet;quincylinet@gmail.com;quincy;0718588815',
   ];
   members.forEach(async (member) => {
-    const [firstName, lastName, email, username, phoneNumber] =
-      member.split(';');
+    const [, , email, username, phoneNumber] = member.split(';');
     await prisma.user.upsert({
       where: { email },
       update: {},
       create: {
-        firstName,
-        lastName,
+        firstName: '',
+        lastName: '',
         email,
         username,
         phoneNumber,

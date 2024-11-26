@@ -13,8 +13,10 @@ import {
 import { Request as ExpressRequest, Response } from 'express';
 import { Public } from 'src/decorators/route.decorator';
 import {
+  AuthenticatedOtpRequest,
   PasswordResetDto,
   PasswordResetRequestDto,
+  PublicOtpRequest,
   SignInDto,
 } from 'src/users/user.dtos';
 import { AuthenticationService } from './authentication.service';
@@ -54,6 +56,7 @@ export class AuthenticationController {
     });
 
     return {
+      approval: sign.approved,
       message: 'Signin successful.',
     };
   }
@@ -93,6 +96,35 @@ export class AuthenticationController {
   ) {
     return await this.authenticationService.passwordResetRequest(
       passwordResetRequestDto,
+    );
+  }
+
+  @Post('request-otp/public')
+  @Public()
+  async requestOtpPublic(
+    @Body(
+      new ValidationPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    publicOtpRequest: PublicOtpRequest,
+  ) {
+    return await this.authenticationService.requestOtpPublic(publicOtpRequest);
+  }
+
+  @Post('request-otp/authenticated')
+  async requestOtpAuthenticated(
+    @Body(
+      new ValidationPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    authenticatedOtpRequest: AuthenticatedOtpRequest,
+    @Request() req: ExpressRequest,
+  ) {
+    return await this.authenticationService.requestOtpAuthenticated(
+      authenticatedOtpRequest,
+      req.authentication?.principal!!,
     );
   }
 

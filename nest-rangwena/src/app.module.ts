@@ -21,6 +21,7 @@ import { RedisModule } from './redis/redis.module';
 import { SuggestionsModule } from './suggestions/suggestions.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { PollsModule } from './polls/polls.module';
+import { OtpModule } from './otp/otp.module';
 
 @Module({
   imports: [
@@ -44,7 +45,10 @@ import { PollsModule } from './polls/polls.module';
         MAIL_PORT: Joi.number().port().default(465),
         MAIL_USER: Joi.string().required(),
         MAIL_PASSWORD: Joi.string().required(),
-        MAIL_FROM: Joi.string().default('noreply@example.com'),
+        MAIL_FROM: Joi.string().default(
+          '"Support Team" <support.2013@rangwena.com>',
+        ),
+        //.default('noreply@example.com'),
       }),
       validationOptions: {
         allowUnknown: true,
@@ -73,6 +77,7 @@ import { PollsModule } from './polls/polls.module';
     SuggestionsModule,
     ActivitiesModule,
     PollsModule,
+    OtpModule,
   ],
   controllers: [AppController],
   providers: [

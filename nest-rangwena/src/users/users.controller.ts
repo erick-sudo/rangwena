@@ -15,16 +15,28 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, UpdateUserDto } from './user.dtos';
+import { CreateUnApprovedUserDto, CreateUserDto, UniqueCheckDto, UpdateUserDto } from './user.dtos';
+import { Public } from 'src/decorators/route.decorator';
 import { PreAuthorize } from 'src/auth/authorization/authorization.decorators';
 import { UserRole } from 'src/auth/authentication/authentication.guard';
-import { Public } from 'src/decorators/route.decorator';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
-//@PreAuthorize<UserRole>({ tokens: [{ name: 'ROLE_ADMIN' }] })
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
+
+  @Post('check/exists')
+  @Public()
+  async checkIfUserExists(
+    @Body(
+      new ValidationPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    uniqueCheckDto: UniqueCheckDto,
+  ) {
+    return this.userService.checkIfUserExists(uniqueCheckDto);
+  }
 
   @Post()
   @Public()
@@ -34,7 +46,7 @@ export class UsersController {
         errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       }),
     )
-    createUserDto: CreateUserDto,
+    createUserDto: CreateUnApprovedUserDto,
   ) {
     return this.userService.createUser(createUserDto);
   }
@@ -45,6 +57,7 @@ export class UsersController {
   }
 
   @Get('index/brief')
+  @Public()
   async indexBrief() {
     return this.userService.briefUsers();
   }
@@ -64,6 +77,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @PreAuthorize<UserRole>({ tokens: [{ name: 'ROLE_ADMIN' }] })
   async update(
     @Param(
       'id',
@@ -87,6 +101,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @PreAuthorize<UserRole>({ tokens: [{ name: 'ROLE_ADMIN' }] })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Param(

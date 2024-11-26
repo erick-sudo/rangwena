@@ -8,10 +8,18 @@ export const APIS = {
     signout: `${apiHost}/auth/signout`,
     requestPasswordReset: `${apiHost}/auth/request-password-reset`,
     resetPassword: `${apiHost}/auth/reset-password`,
+    requestAuthenticatedOtp: `${apiHost}/auth/request-otp/authenticated`,
+    requestPublicOtp: `${apiHost}/auth/request-otp/public`,
+  },
+  init: {
+    indexBrief: `${apiHost}/users/index/brief`,
+    index: `${apiHost}/users`,
+    retrieve: `${apiHost}/users/<:id>`,
   },
   users: {
     index: `${apiHost}/users`,
     retrieve: `${apiHost}/users/<:userId>`,
+    checkExists: `${apiHost}/users/check/exists`,
   },
   suggestions: {
     index: `${apiHost}/suggestions`,

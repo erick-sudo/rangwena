@@ -1,17 +1,27 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
-import { CreateUserDto } from './user.dtos';
+import {
+  CreateUnApprovedUserDto,
+  CreateUserDto,
+  UniqueCheckDto,
+} from './user.dtos';
 import { PasswordService } from 'src/password/password.service';
 import { GrantedAuthority } from 'src/auth/authentication/authentication.guard';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
+
+  async checkIfUserExists(uniqueCheckDto: UniqueCheckDto) {
+    return {
+      exists: !!(await this.prisma.user.findFirst({
+        where: {
+          [uniqueCheckDto.field]: uniqueCheckDto.value,
+        },
+      })),
+    };
+  }
 
   async findByUsernameOrEmailOrPhoneNumber(identity: string): Promise<User> {
     const user = await this.prisma.user.findFirst({
@@ -38,7 +48,11 @@ export class UsersService {
   }
 
   async findAll() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
+    });
     return users;
   }
 
@@ -49,6 +63,8 @@ export class UsersService {
         firstName: true,
         lastName: true,
         email: true,
+        username: true,
+        approved: true,
       },
     });
     return users;
@@ -62,12 +78,11 @@ export class UsersService {
     });
   }
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const { firstName, lastName, username, email, phoneNumber, password } =
-      createUserDto;
+  async createUser(createUserDto: CreateUnApprovedUserDto): Promise<User> {
+    const { username, email, phoneNumber, password } = createUserDto;
     const userInput: Prisma.UserCreateInput = {
-      firstName,
-      lastName,
+      firstName: '',
+      lastName: '',
       username,
       email,
       phoneNumber,

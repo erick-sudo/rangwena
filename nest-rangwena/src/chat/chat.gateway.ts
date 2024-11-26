@@ -38,7 +38,7 @@ export class ChatGateway
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    console.log(`JOINED: #${client.id}`);
+    //console.log(`JOINED: #${client.id}`);
   }
 
   handleDisconnect(client: Socket) {

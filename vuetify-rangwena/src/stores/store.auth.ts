@@ -18,6 +18,9 @@ export const useAuthStore = defineStore("auth", {
     loggedIn(state) {
       return !!state.auth;
     },
+    pendingApproval(state) {
+      return !!state.auth?.initials?.approved;
+    },
     principal(state) {
       return state.auth?.principal;
     },

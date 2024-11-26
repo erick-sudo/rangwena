@@ -9,7 +9,7 @@
           <v-avatar
             border
             :color="wsStore.online ? 'primary' : 'undefined'"
-            image="http://192.168.158.148:8000/erick.jpg"
+            image="http://localhost:8000/erick.jpg"
             :text="authStore.initials?.firstName"
           ></v-avatar>
         </template>

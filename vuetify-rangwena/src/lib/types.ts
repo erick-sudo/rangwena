@@ -13,6 +13,7 @@ export interface Initials {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  approved: boolean;
 }
 
 export interface TimeStamps {
@@ -41,6 +42,18 @@ export interface RUser extends Entity, TimeStamps {
   phoneNumber: string;
 }
 
+export interface CreateMemberRegistration {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phoneNumber: string;
+}
+
+export interface MemberRegistration extends Entity, CreateMemberRegistration {
+  approved: boolean;
+}
+
 export interface LoginForm {
   identity: string;
   password: string;
@@ -52,6 +65,8 @@ export interface ResetPasswordForm {
   confirmNewPassword: string;
   otp: string;
 }
+
+export type OtpRequestReason = "password-reset" | "account-approval";
 
 export const loginSchema = Joi.object({
   identity: Joi.string().required().messages({

@@ -1,5 +1,5 @@
 <template>
-  <div>Settings</div>
+  <under-construction></under-construction>
 </template>
 <script setup lang="ts"></script>
 <style lang="css" scoped></style>
