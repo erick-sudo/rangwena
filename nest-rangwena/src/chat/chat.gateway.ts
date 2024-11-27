@@ -1,4 +1,3 @@
-import { UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -11,16 +10,11 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Principal } from 'src/auth/authentication/authentication.guard';
-import { CreateUserDto } from 'src/users/user.dtos';
 import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: [
-      'http://localhost:4000',
-      'http://192.168.180.148:4000',
-      'http://192.168.158.148:4000',
-    ],
+    origin: ['http://localhost:4000', 'https://rangwena.vercel.app'],
   },
 })
 export class ChatGateway
