@@ -20,15 +20,15 @@
           title="Back to sign in"
           variant="tonal"
           color="primary"
-          icon="mdi-arrow-left"
+          icon="mdi-arrow-left-thin"
         ></v-btn>
-        <p class="text-lg">
+        <p class="text">
           Please identify yourself by providing your username, email, or phone
           number and we will send you instructions on how to reset your
           password.
         </p>
         <v-text-field
-          prepend-inner-icon="mdi-account"
+          prepend-inner-icon="mdi-account-outline"
           density="comfortable"
           :disabled="sending || waitingResetWindow"
           label="Username, Email, or Phone"

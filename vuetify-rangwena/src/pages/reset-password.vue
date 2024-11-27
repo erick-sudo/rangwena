@@ -16,18 +16,18 @@
         v-model="valid"
         @submit.prevent="handleSubmit"
       >
-        <v-btn
-          @click="$router.push('/sign-in')"
-          title="Back to sign in"
-          variant="tonal"
-          color="primary"
-          icon="mdi-arrow-left"
-        ></v-btn>
-        <h3 class="text-2xl font-semibold">
-          Create a new password
-        </h3>
+        <div>
+          <v-chip
+            @click="$router.push('/sign-in')"
+            variant="tonal"
+            color="primary"
+            prepend-icon="mdi-arrow-left-thin"
+            >Back to sign in</v-chip
+          >
+        </div>
+        <h3 class="text-2xl font-semibold">Create a new password</h3>
         <v-text-field
-          prepend-inner-icon="mdi-key-outline"
+          prepend-inner-icon="mdi-lock-outline"
           :append-inner-icon="visibilityIcon"
           @click:append-inner="toggleVisibility"
           density="comfortable"
@@ -48,7 +48,7 @@
           ]"
         ></v-text-field>
         <v-text-field
-          prepend-inner-icon="mdi-key-outline"
+          prepend-inner-icon="mdi-lock-outline"
           :append-inner-icon="visibilityIcon"
           @click:append-inner="toggleVisibility"
           density="comfortable"

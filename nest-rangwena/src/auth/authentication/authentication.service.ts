@@ -87,62 +87,48 @@ export class AuthenticationService {
       otpRequest.identity,
     );
 
-    return this.prisma.$transaction(async (tx) => {
-      // const otp = await this.otpService.create(user.id);
-      const otp = await tx.oneTimePassword.upsert({
-        where: { userId: user.id },
-        update: {
-          createdAt: new Date().toISOString(),
-        },
-        create: {
-          value: this.otpService.generateOTP(6),
-          userId: user.id,
-        },
-      });
+    const otp = await this.otpService.create(user.id);
 
-      // Send otp via mail
-      await this.mailService.sendOtpRequestMail({
-        options: {
-          subject: otpRequest.reason,
-          to: user.email,
-          template: 'otp-request',
-        },
-        context: {
-          otp: otp.value,
-          name: user.firstName,
-        },
-      });
-
-      return {
-        message: 'A one-time-password has been sent your email.',
-      };
+    // Send otp via mail
+    await this.mailService.sendOtpRequestMail({
+      options: {
+        subject: otpRequest.reason,
+        to: user.email,
+        template: 'otp-request',
+      },
+      context: {
+        otp: otp.value,
+        name: user.firstName,
+      },
     });
+
+    return {
+      message: 'A one-time-password has been sent your email.',
+    };
   }
 
   async requestOtpAuthenticated(
     otpRequest: AuthenticatedOtpRequest,
     currentUser: Principal,
   ) {
-    return this.prisma.$transaction(async () => {
-      const otp = await this.otpService.create(currentUser.id);
+    const otp = await this.otpService.create(currentUser.id);
 
-      // Send otp via mail
-      await this.mailService.sendOtpRequestMail({
-        options: {
-          subject: otpRequest.reason,
-          to: currentUser.email,
-          template: 'otp-request',
-        },
-        context: {
-          otp: otp.value,
-          name: currentUser.username,
-        },
-      });
-
-      return {
-        message: 'A one-time-password has been sent your email.',
-      };
+    // Send otp via mail
+    await this.mailService.sendOtpRequestMail({
+      options: {
+        subject: otpRequest.reason,
+        to: currentUser.email,
+        template: 'otp-request',
+      },
+      context: {
+        otp: otp.value,
+        name: currentUser.username,
+      },
     });
+
+    return {
+      message: 'A one-time-password has been sent your email.',
+    };
   }
 
   async passwordReset({ newPassword, otp }: PasswordResetDto) {

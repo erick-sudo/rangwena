@@ -45,7 +45,9 @@
 
           <v-text-field
             prepend-inner-icon="mdi-lock-outline"
-            type="password"
+            :append-inner-icon="visibilityIcon"
+            @click:append-inner="toggleVisibility"
+            :type="seePassword"
             density="comfortable"
             rounded="lg"
             class="mt-2"
@@ -138,6 +140,14 @@ const identity = ref(""); // ref("admin@example.com");
 const password = ref(""); // ref("Password123@");
 const submitting = ref(false);
 const form = useTemplateRef("form");
+const seePassword = ref("password");
+
+const toggleVisibility = () =>
+  (seePassword.value = seePassword.value === "password" ? "text" : "password");
+
+const visibilityIcon = computed(() =>
+  seePassword.value === "password" ? "mdi-eye-outline" : "mdi-eye-off-outline"
+);
 
 const handleSubmit = async () => {
   if (valid.value) {
