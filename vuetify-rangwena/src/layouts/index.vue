@@ -1,23 +1,25 @@
 <template>
   <v-layout full-height>
-    <template v-if="!authStore.pendingApproval">
-      <account-approval></account-approval>
-    </template>
+    <template v-if="authStore.loggedIn">
+      <template v-if="authStore.activated">
+        <application-bar
+          @sign-out="handleSignout"
+          @toggle-drawer="drawer = !drawer"
+        ></application-bar>
 
-    <template v-else-if="authStore.loggedIn">
-      <application-bar
-        @sign-out="handleSignout"
-        @toggle-drawer="drawer = !drawer"
-      ></application-bar>
+        <left-navigation-drawer
+          @sign-out="handleSignout"
+          v-model="drawer"
+        ></left-navigation-drawer>
 
-      <left-navigation-drawer
-        @sign-out="handleSignout"
-        v-model="drawer"
-      ></left-navigation-drawer>
+        <v-main class="min-h-screen">
+          <router-view />
+        </v-main>
+      </template>
 
-      <v-main class="min-h-screen">
-        <router-view />
-      </v-main>
+      <template v-else>
+        <account-approval></account-approval>
+      </template>
     </template>
 
     <template v-else>

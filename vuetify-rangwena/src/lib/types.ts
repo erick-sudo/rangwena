@@ -14,6 +14,7 @@ export interface Initials {
   lastName: string;
   phoneNumber: string;
   approved: boolean;
+  activated: boolean;
 }
 
 export interface TimeStamps {

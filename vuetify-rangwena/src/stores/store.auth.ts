@@ -21,6 +21,9 @@ export const useAuthStore = defineStore("auth", {
     pendingApproval(state) {
       return !!state.auth?.initials?.approved;
     },
+    activated(state) {
+      return !!state.auth?.initials?.activated;
+    },
     principal(state) {
       return state.auth?.principal;
     },
@@ -28,7 +31,10 @@ export const useAuthStore = defineStore("auth", {
       return state.auth?.initials;
     },
     isAdmin(state) {
-      return state.auth?.authorities.some((a) => a.name === "ROLE_ADMIN");
+      return (
+        !!state.auth?.initials.activated &&
+        state.auth?.authorities.some((a) => a.name === "ROLE_ADMIN")
+      );
     },
     authorities(state) {
       return state.auth?.authorities;
@@ -74,10 +80,10 @@ export const useAuthStore = defineStore("auth", {
         func: axiosGet,
         args: [APIS.account.signout],
       }).then((res) => {
+        this.clear();
         if (res.status === "ok") {
-          this.clear();
           return {
-            status: "error",
+            status: "success",
             message: "Signed out successfully.",
           };
         }

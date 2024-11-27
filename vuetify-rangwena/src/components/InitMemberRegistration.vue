@@ -3,6 +3,45 @@
     <v-card :loading="submitting">
       <v-toolbar color="primary">
         <v-toolbar-title>Member Registration Request</v-toolbar-title>
+        <v-toolbar-items class="pt-1 pe-2 gap-2">
+          <v-chip
+            size="small"
+            variant="tonal"
+            @click="$router.push('/')"
+            prepend-icon="mdi-home-outline"
+            >Home</v-chip
+          >
+          <v-menu v-if="authStore.loggedIn">
+            <template #activator="{ props }">
+              <v-avatar
+                border="2"
+                v-bind="props"
+                size="24"
+                image="http://localhost:8000/erick.jpg"
+              ></v-avatar>
+            </template>
+            <v-list nav density="compact" class="pa-0">
+              <v-list-item
+                rounded="0"
+                density="compact"
+                subtitle="Sign out"
+                variant="text"
+                @click="handleSignout"
+                ><template #prepend>
+                  <v-icon size="tiny">mdi-logout</v-icon>
+                </template></v-list-item
+              >
+            </v-list>
+          </v-menu>
+          <v-chip
+            v-else
+            size="small"
+            variant="tonal"
+            @click="$router.push('/sign-in')"
+            prepend-icon="mdi-login"
+            >Login</v-chip
+          >
+        </v-toolbar-items>
 
         <template #extension>
           <v-tabs v-model="tab">
@@ -150,6 +189,8 @@
                 :member
                 @edit="handleEdit"
                 @delete="handleDelete"
+                @approve="(id) => handleApproval(id, true)"
+                @revoke="(id) => handleApproval(id, false)"
               ></init-member-list-item>
             </template>
           </v-list>
@@ -174,6 +215,7 @@ import { axiosDelete, axiosGet, axiosPatch, axiosPost } from "@/lib/lib.axios";
 import { CreateMemberRegistration, MemberRegistration } from "@/lib/types";
 import { gradePassword } from "@/lib/utils";
 import { useAlertStore } from "@/stores/store.alerts";
+import { useAuthStore } from "@/stores/store.auth";
 
 const passwordStrengthColors: Record<string, string> = {
   "0": "secondary",
@@ -183,6 +225,8 @@ const passwordStrengthColors: Record<string, string> = {
   "4": "info",
   "5": "success",
 };
+
+const authStore = useAuthStore();
 
 export type Editable = "username" | "email" | null;
 
@@ -195,6 +239,14 @@ const form = useTemplateRef("form");
 const valid = ref(false);
 
 const submitting = ref(false);
+
+const handleSignout = async () => {
+  submitting.value = true;
+  await authStore.signout().then((res) => {
+    submitting.value = false;
+    pushAlert({ alert: res });
+  });
+};
 
 const newMember = ref<CreateMemberRegistration>({
   username: "",
@@ -242,6 +294,39 @@ const handleEdit = async (id: any, payload: any) => {
             message:
               res.errors?.message ||
               "Could not update user details. Please try again later.",
+          },
+        });
+      }
+    })
+    .finally(() => (submitting.value = false));
+};
+
+const handleApproval = async (id: any, approved: boolean) => {
+  submitting.value = true;
+  await handleRequest<MemberRegistration>({
+    func: axiosPatch,
+    args: [APIS.init.retrieve.replace("<:id>", `${id}`), { approved }],
+  })
+    .then(async (res) => {
+      if (res.status === "ok") {
+        pushAlert({
+          alert: {
+            status: "success",
+            message: `Account ${
+              approved ? "approved" : "revoked"
+            } successfully.`,
+          },
+        });
+        await fetchMembers();
+      } else {
+        pushAlert({
+          alert: {
+            status: "error",
+            message:
+              res.errors?.message ||
+              `Could not ${
+                approved ? "approve" : "revoke"
+              } account. Please try again later.`,
           },
         });
       }
@@ -299,7 +384,7 @@ const checkConflict = async (
 const handleSubmit = () => {
   if (valid.value) {
     submitting.value = true;
-    handleRequest<MemberRegistration>({
+    handleRequest<any>({
       func: axiosPost,
       args: [APIS.init.index, newMember.value],
     })
@@ -309,10 +394,10 @@ const handleSubmit = () => {
           pushAlert({
             alert: {
               status: "success",
-              message: "Thank you for signing up.",
+              message: res.result?.message || "Thank you for signing up.",
             },
           });
-          form.value?.resetValidation()
+          form.value?.resetValidation();
           form.value?.reset();
         } else {
           pushAlert({

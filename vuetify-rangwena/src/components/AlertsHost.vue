@@ -1,6 +1,6 @@
 <template>
   <div
-    style="z-index: 999"
+    style="z-index: 9999"
     class="fixed bottom-4 w-full max-w-sm left-1/2 -translate-x-1/2 grid gap-2"
   >
     <transition name="slide" v-for="(alertObj, index) in alerts" :key="index">

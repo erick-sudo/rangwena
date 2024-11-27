@@ -26,7 +26,7 @@
           <h3 class="text-xl font-semibold mx-auto">Log into your account</h3>
 
           <v-text-field
-            prepend-inner-icon="mdi-account"
+            prepend-inner-icon="mdi-account-outline"
             density="comfortable"
             rounded="lg"
             class="mt-2"
@@ -44,7 +44,7 @@
           ></v-text-field>
 
           <v-text-field
-            prepend-inner-icon="mdi-key-outline"
+            prepend-inner-icon="mdi-lock-outline"
             type="password"
             density="comfortable"
             rounded="lg"
@@ -81,6 +81,13 @@
           >
             Sign in
           </v-btn>
+
+          <p class="self-center mt-2 text-sm">
+            Not yet registered?
+            <RouterLink class="text-primary" to="init-reg"
+              >Sign up here</RouterLink
+            >.
+          </p>
 
           <div class="flex mt-2 items-center gap-3">
             <span class="flex-grow border-b"></span>

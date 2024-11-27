@@ -88,6 +88,14 @@
             subtitle="Logout"
             value="logout"
           ></v-list-item>
+          <v-divider></v-divider>
+          <v-list-item
+            class="mt-1"
+            @click="$router.push('/init-reg')"
+            prepend-icon="mdi-group"
+            subtitle="Member Registrations"
+            value="registrations"
+          ></v-list-item>
         </v-list>
       </v-card>
     </v-menu>

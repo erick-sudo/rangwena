@@ -1,5 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { OneTimePassword } from '@prisma/client';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { OneTimePassword, PrismaClient } from '@prisma/client';
 import { getRandomInt } from 'src/lib/utils';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -8,7 +12,11 @@ export class OtpService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(userId: string) {
-    return this.prisma.oneTimePassword.upsert({
+    return await this.createOtp(this.prisma, userId);
+  }
+
+  async createOtp(client: PrismaService, userId: string) {
+    return client.oneTimePassword.upsert({
       where: { userId },
       update: {
         createdAt: new Date().toISOString(),
@@ -21,14 +29,18 @@ export class OtpService {
   }
 
   async verify(otp: string) {
-    const oneTimePassword = await this.prisma.oneTimePassword.findFirstOrThrow({
-      where: {
-        value: otp,
-      },
-      include: {
-        user: true,
-      },
-    });
+    const oneTimePassword = await this.prisma.oneTimePassword
+      .findFirstOrThrow({
+        where: {
+          value: otp,
+        },
+        include: {
+          user: true,
+        },
+      })
+      .catch(() => {
+        throw new NotFoundException('Invalid or expired otp.');
+      });
     if (this.isExpired(oneTimePassword)) {
       await this.prisma.oneTimePassword.delete({
         where: {

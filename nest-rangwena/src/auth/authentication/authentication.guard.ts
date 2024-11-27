@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -54,6 +55,9 @@ export class Initials {
 
   @Expose()
   approved: boolean;
+
+  @Expose()
+  activated: boolean;
 }
 
 // Authentication context
@@ -85,8 +89,9 @@ export class Authentication {
     lastName: string,
     phoneNumber: string,
     approved: boolean,
+    activated: boolean,
   ) {
-    this.#initials = { firstName, lastName, phoneNumber, approved };
+    this.#initials = { firstName, lastName, phoneNumber, approved, activated };
     return this;
   }
 
@@ -163,9 +168,14 @@ export class AuthenticationGuard implements CanActivate {
     const user = await this.usersService.findByEmail(email).catch((_err) => {
       // Invalid authentication details
       throw new UnauthorizedException(
-        'Sorry! User with the provided authentication details could not be verified',
+        'Sorry! User with the provided authentication details could not be verified. Your session may have expired.',
       );
     });
+
+    // Check if account is activated
+    // if (!user.activated) {
+    //   throw new ForbiddenException('Your account is inactive.');
+    // }
 
     // Attaching authtentication context (user details) to the request object
     request.authentication = Authentication.build()
@@ -180,6 +190,7 @@ export class AuthenticationGuard implements CanActivate {
         user.lastName,
         user.phoneNumber,
         user.approved,
+        user.activated,
       );
 
     return true;

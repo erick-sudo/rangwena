@@ -3,7 +3,10 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SentMessageInfo } from 'nodemailer';
 
-export type HBSTemplates = 'password-reset' | 'otp-request';
+export type HBSTemplates =
+  | 'password-reset'
+  | 'otp-request'
+  | 'initial-registration';
 
 export type Email = string;
 
@@ -24,6 +27,12 @@ export interface PasswordResetRequestHBSContext {
 
 export interface OtpRequestHBSContext {
   name: string;
+  otp: string;
+}
+
+export interface InitialRegistrationHBSContext {
+  name: string;
+  uiURL: string;
   otp: string;
 }
 
@@ -51,6 +60,16 @@ export class MailService {
           'Sorry! An internal server error occured. Please try again later.',
         );
       });
+  }
+
+  async sendInitialRegistrationOtp(spec: {
+    options: MailOptions;
+    context: InitialRegistrationHBSContext;
+  }) {
+    return await this.send({
+      options: spec.options,
+      context: spec.context,
+    });
   }
 
   async sendPasswordResetRequestMail(spec: {

@@ -10,6 +10,7 @@ export const APIS = {
     resetPassword: `${apiHost}/auth/reset-password`,
     requestAuthenticatedOtp: `${apiHost}/auth/request-otp/authenticated`,
     requestPublicOtp: `${apiHost}/auth/request-otp/public`,
+    activateAccount: `${apiHost}/auth/activate-account`,
   },
   init: {
     indexBrief: `${apiHost}/users/index/brief`,

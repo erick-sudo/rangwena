@@ -1,17 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User, Prisma } from '@prisma/client';
-import {
-  CreateUnApprovedUserDto,
-  CreateUserDto,
-  UniqueCheckDto,
-} from './user.dtos';
+import { CreateUnApprovedUserDto, UniqueCheckDto } from './user.dtos';
 import { PasswordService } from 'src/password/password.service';
 import { GrantedAuthority } from 'src/auth/authentication/authentication.guard';
+import { OtpService } from 'src/otp/otp.service';
+import { MailService } from 'src/mail/mail.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private otpService: OtpService,
+    private mailService: MailService,
+    private configService: ConfigService,
+  ) {}
 
   async checkIfUserExists(uniqueCheckDto: UniqueCheckDto) {
     return {
@@ -58,6 +62,9 @@ export class UsersService {
 
   async briefUsers() {
     const users = await this.prisma.user.findMany({
+      orderBy: {
+        updatedAt: 'desc',
+      },
       select: {
         id: true,
         firstName: true,
@@ -78,7 +85,7 @@ export class UsersService {
     });
   }
 
-  async createUser(createUserDto: CreateUnApprovedUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUnApprovedUserDto) {
     const { username, email, phoneNumber, password } = createUserDto;
     const userInput: Prisma.UserCreateInput = {
       firstName: '',
@@ -88,10 +95,46 @@ export class UsersService {
       phoneNumber,
       passwordDigest: PasswordService.hashedPassword(password),
     };
-    const createUser = await this.prisma.user.create({
-      data: userInput,
+
+    // User registration transaction
+    return this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: userInput,
+      });
+
+      const host = this.configService.get<string>('VUE_FRONTEND');
+      const url = `${host}$`;
+
+      const otp = await tx.oneTimePassword.upsert({
+        where: { userId: user.id },
+        update: {
+          createdAt: new Date().toISOString(),
+        },
+        create: {
+          value: this.otpService.generateOTP(6),
+          userId: user.id,
+        },
+      });
+
+      // Send mail
+      await this.mailService.sendInitialRegistrationOtp({
+        options: {
+          subject: 'Reset your password',
+          to: user.email,
+          template: 'initial-registration',
+        },
+        context: {
+          otp: otp.value,
+          uiURL: url,
+          name: user.firstName,
+        },
+      });
+
+      return {
+        message:
+          'Thank you for signing up. Check your email for an otp to activate your account.',
+      };
     });
-    return createUser;
   }
 
   async updateUser(params: {

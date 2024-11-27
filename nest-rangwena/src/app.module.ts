@@ -22,6 +22,9 @@ import { SuggestionsModule } from './suggestions/suggestions.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { PollsModule } from './polls/polls.module';
 import { OtpModule } from './otp/otp.module';
+import { OtpService } from './otp/otp.service';
+import { TasksService } from './tasks/tasks.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -67,6 +70,7 @@ import { OtpModule } from './otp/otp.module';
         },
       }),
     }),
+    OtpModule,
     UsersModule,
     AuthenticationModule,
     AuthorizationModule,
@@ -77,7 +81,7 @@ import { OtpModule } from './otp/otp.module';
     SuggestionsModule,
     ActivitiesModule,
     PollsModule,
-    OtpModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [
@@ -88,8 +92,10 @@ import { OtpModule } from './otp/otp.module';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    OtpService,
     PasswordService,
     ChatGateway,
+    TasksService,
   ],
 })
 export class AppModule {}

@@ -1,7 +1,9 @@
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsStrongPassword,
   Length,
@@ -39,6 +41,18 @@ export class CreateUnApprovedUserDto extends OmitType(CreateUserDto, [
   'lastName',
 ]) {}
 
+export class ActivateAccountDto {
+  @IsNotEmpty({ message: 'first name is required' })
+  firstName: string;
+
+  @IsNotEmpty({ message: 'last name is required' })
+  lastName: string;
+
+  @IsNotEmpty({message: "an otp is required"})
+  @Length(6, 6, { message: 'otp must be 6 characters' })
+  otp: string;
+}
+
 export class UpdateUserDto extends PartialType(
   OmitType(CreateUserDto, [
     'password',
@@ -46,7 +60,15 @@ export class UpdateUserDto extends PartialType(
     'email',
     'phoneNumber',
   ] as const),
-) {}
+) {
+  @IsOptional()
+  @IsBoolean()
+  approved: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  activated: boolean;
+}
 
 export class SignInDto {
   @IsNotEmpty({
@@ -76,7 +98,7 @@ export class PasswordResetDto {
 
 export enum OtpRequestReason {
   PASSWORD_RESET = 'password-reset',
-  ACCOUNT_APPROVAL = 'account-approval',
+  ACCOUNT_ACTIVATION = 'account-activation',
 }
 
 export class PublicOtpRequest {

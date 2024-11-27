@@ -24,6 +24,7 @@ model User {
   updatedAt       DateTime          @updatedAt
   passwordDigest  String
   approved        Boolean           @default(false)
+  activated       Boolean           @default(false)
   userRoles       UserRole[]
   OneTimePassword OneTimePassword[]
   suggestions     Suggestion[]

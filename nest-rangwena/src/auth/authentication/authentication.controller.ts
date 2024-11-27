@@ -13,6 +13,7 @@ import {
 import { Request as ExpressRequest, Response } from 'express';
 import { Public } from 'src/decorators/route.decorator';
 import {
+  ActivateAccountDto,
   AuthenticatedOtpRequest,
   PasswordResetDto,
   PasswordResetRequestDto,
@@ -139,5 +140,18 @@ export class AuthenticationController {
     passwordResetDto: PasswordResetDto,
   ) {
     return await this.authenticationService.passwordReset(passwordResetDto);
+  }
+
+  @Public()
+  @Post('activate-account')
+  async activateAccount(
+    @Body(
+      new ValidationPipe({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    activateAccountDto: ActivateAccountDto,
+  ) {
+    return await this.authenticationService.activateAccount(activateAccountDto);
   }
 }

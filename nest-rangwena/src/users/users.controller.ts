@@ -15,7 +15,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUnApprovedUserDto, CreateUserDto, UniqueCheckDto, UpdateUserDto } from './user.dtos';
+import {
+  CreateUnApprovedUserDto,
+  CreateUserDto,
+  UniqueCheckDto,
+  UpdateUserDto,
+} from './user.dtos';
 import { Public } from 'src/decorators/route.decorator';
 import { PreAuthorize } from 'src/auth/authorization/authorization.decorators';
 import { UserRole } from 'src/auth/authentication/authentication.guard';
