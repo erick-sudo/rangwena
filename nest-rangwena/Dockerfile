@@ -19,7 +19,7 @@ RUN chmod +x /usr/wait-for-it.sh
 # Copy the .env and .env.development files
 # COPY .env .development.env ./
 
-RUN npx prisma generate
+RUN yarn prisma generate dev
 
 # Creates a "dist" folder with the production build
 RUN yarn build
@@ -28,4 +28,4 @@ RUN yarn build
 EXPOSE 3000
 
 # Start the server using the development build
-CMD ["sh", "-c", "/usr/wait-for-it.sh mysql_db:3306 -- npm run start:migrate:dev"]
+CMD ["sh", "-c", "yarn run start:migrate:dev"]
