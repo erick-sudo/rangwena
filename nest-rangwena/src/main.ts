@@ -7,7 +7,7 @@ import { KnownPrismaClientRequestErrorFilter } from './filters/filter.known_pris
 import { ExcludeSensitiveDataInterceptor } from './interceptors/interceptor.sensitive-data';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { RedisIoAdapter } from './redis/RedisIoAdapter';
+// import { RedisIoAdapter } from './redis/RedisIoAdapter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -17,7 +17,7 @@ async function bootstrap() {
   const port = configService.get<number>('PORT', { infer: true });
   const vueFrontEnd = configService.get<string>('VUE_FRONTEND');
 
-  const redisIoAdapter = new RedisIoAdapter(app);
+  // const redisIoAdapter = new RedisIoAdapter(app);
 
   const config = new DocumentBuilder()
     .setTitle('Rangwena class of 2013')
@@ -28,10 +28,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await redisIoAdapter.connectToRedis().catch((error: any) => {
-    console.log(error);
-  });
-  app.useWebSocketAdapter(redisIoAdapter);
+  // await redisIoAdapter.connectToRedis().catch((error: any) => {
+  //   console.log(error);
+  // });
+  // app.useWebSocketAdapter(redisIoAdapter);
 
   app.enableCors({
     origin: vueFrontEnd,

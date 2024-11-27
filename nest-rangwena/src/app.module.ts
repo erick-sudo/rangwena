@@ -17,7 +17,7 @@ import { RolesGuard } from './auth/authorization/roles.guard';
 import { PasswordService } from './password/password.service';
 import { MailModule } from './mail/mail.module';
 import { ChatGateway } from './chat/chat.gateway';
-import { RedisModule } from './redis/redis.module';
+// import { RedisModule } from './redis/redis.module';
 import { SuggestionsModule } from './suggestions/suggestions.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { PollsModule } from './polls/polls.module';
@@ -77,7 +77,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     PrismaModule,
     RolesModule,
     MailModule,
-    RedisModule,
+    // RedisModule,
     SuggestionsModule,
     ActivitiesModule,
     PollsModule,
