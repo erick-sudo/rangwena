@@ -60,28 +60,26 @@ export class AuthenticationService {
     const path = '/reset-password';
     const url = `${host}${path}`;
 
-    return this.prisma.$transaction(async (tx) => {
-      const otp = await this.otpService.create(user.id);
+    const otp = await this.otpService.create(user.id);
 
-      // Send mail
-      await this.mailService.sendPasswordResetRequestMail({
-        options: {
-          subject: 'Reset your password',
-          to: user.email,
-          template: 'password-reset',
-        },
-        context: {
-          otp: otp.value,
-          uiURL: url,
-          name: user.firstName,
-        },
-      });
-
-      return {
-        message:
-          'Please follow the instructions sent to your email to reset your password.',
-      };
+    // Send mail
+    await this.mailService.sendPasswordResetRequestMail({
+      options: {
+        subject: 'Reset your password',
+        to: user.email,
+        template: 'password-reset',
+      },
+      context: {
+        otp: otp.value,
+        uiURL: url,
+        name: user.firstName,
+      },
     });
+
+    return {
+      message:
+        'Please follow the instructions sent to your email to reset your password.',
+    };
   }
 
   async requestOtpPublic(otpRequest: PublicOtpRequest) {
