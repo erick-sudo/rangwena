@@ -14,7 +14,11 @@ import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:4000', 'https://rangwena.vercel.app'],
+    origin: [
+      'http://192.168.158.148:4000',
+      'http://localhost:4000',
+      'https://rangwena.vercel.app',
+    ],
   },
 })
 export class ChatGateway
@@ -74,7 +78,7 @@ export class ChatGateway
 
 export type ConversationType = 'individual' | 'channel';
 
-interface WSChatMessage {
+export interface WSChatMessage {
   from: string;
   to: string;
   conversationType: ConversationType;

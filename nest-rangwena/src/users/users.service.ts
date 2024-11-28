@@ -137,11 +137,14 @@ export class UsersService {
     });
   }
 
-  async updateUser(params: {
-    where: Prisma.UserWhereUniqueInput;
-    data: Prisma.UserUpdateInput;
-  }): Promise<User> {
-    const updateUser = await this.prisma.user.update({
+  async updateUser(
+    params: {
+      where: Prisma.UserWhereUniqueInput;
+      data: Prisma.UserUpdateInput;
+    },
+    transactionClient?: Prisma.TransactionClient,
+  ): Promise<User> {
+    const updateUser = await (transactionClient || this.prisma).user.update({
       where: params.where,
       data: params.data,
     });

@@ -3,6 +3,7 @@ import { OtpService } from './otp.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
-  providers: [OtpService, PrismaService]
+  providers: [OtpService, PrismaService],
+  exports: [OtpService],
 })
 export class OtpModule {}

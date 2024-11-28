@@ -16,15 +16,15 @@ import { AuthenticationGuard } from './auth/authentication/authentication.guard'
 import { RolesGuard } from './auth/authorization/roles.guard';
 import { PasswordService } from './password/password.service';
 import { MailModule } from './mail/mail.module';
-import { ChatGateway } from './chat/chat.gateway';
 // import { RedisModule } from './redis/redis.module';
 import { SuggestionsModule } from './suggestions/suggestions.module';
 import { ActivitiesModule } from './activities/activities.module';
 import { PollsModule } from './polls/polls.module';
 import { OtpModule } from './otp/otp.module';
-import { OtpService } from './otp/otp.service';
 import { TasksService } from './tasks/tasks.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { BullModule } from '@nestjs/bullmq';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -52,6 +52,8 @@ import { ScheduleModule } from '@nestjs/schedule';
           '"Support Team" <support.2013@rangwena.com>',
         ),
         //.default('noreply@example.com'),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.string().required(),
       }),
       validationOptions: {
         allowUnknown: true,
@@ -78,23 +80,31 @@ import { ScheduleModule } from '@nestjs/schedule';
     RolesModule,
     MailModule,
     // RedisModule,
+    ChatModule,
     SuggestionsModule,
     ActivitiesModule,
     PollsModule,
     ScheduleModule.forRoot(),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+        },
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    UsersService,
     { provide: APP_GUARD, useClass: AuthenticationGuard },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
-    OtpService,
     PasswordService,
-    ChatGateway,
     TasksService,
   ],
 })

@@ -60,26 +60,28 @@ export class AuthenticationService {
     const path = '/reset-password';
     const url = `${host}${path}`;
 
-    const otp = await this.otpService.create(user.id);
+    return this.prisma.$transaction(async (tx) => {
+      const otp = await this.otpService.create(user.id, tx);
 
-    // Send mail
-    await this.mailService.sendPasswordResetRequestMail({
-      options: {
-        subject: 'Reset your password',
-        to: user.email,
-        template: 'password-reset',
-      },
-      context: {
-        otp: otp.value,
-        uiURL: url,
-        name: user.firstName,
-      },
+      // Send mail
+      await this.mailService.sendPasswordResetRequestMail({
+        options: {
+          subject: 'Reset your password',
+          to: user.email,
+          template: 'password-reset',
+        },
+        context: {
+          otp: otp.value,
+          uiURL: url,
+          name: user.firstName,
+        },
+      });
+
+      return {
+        message:
+          'Please follow the instructions sent to your email to reset your password.',
+      };
     });
-
-    return {
-      message:
-        'Please follow the instructions sent to your email to reset your password.',
-    };
   }
 
   async requestOtpPublic(otpRequest: PublicOtpRequest) {
@@ -87,95 +89,107 @@ export class AuthenticationService {
       otpRequest.identity,
     );
 
-    const otp = await this.otpService.create(user.id);
+    return this.prisma.$transaction(async (tx) => {
+      const otp = await this.otpService.create(user.id, tx);
 
-    // Send otp via mail
-    await this.mailService.sendOtpRequestMail({
-      options: {
-        subject: otpRequest.reason,
-        to: user.email,
-        template: 'otp-request',
-      },
-      context: {
-        otp: otp.value,
-        name: user.firstName,
-      },
+      // Send otp via mail
+      await this.mailService.sendOtpRequestMail({
+        options: {
+          subject: otpRequest.reason,
+          to: user.email,
+          template: 'otp-request',
+        },
+        context: {
+          otp: otp.value,
+          name: user.firstName,
+        },
+      });
+
+      return {
+        message: 'A one-time-password has been sent your email.',
+      };
     });
-
-    return {
-      message: 'A one-time-password has been sent your email.',
-    };
   }
 
   async requestOtpAuthenticated(
     otpRequest: AuthenticatedOtpRequest,
     currentUser: Principal,
   ) {
-    const otp = await this.otpService.create(currentUser.id);
+    return this.prisma.$transaction(async (tx) => {
+      const otp = await this.otpService.create(currentUser.id, tx);
 
-    // Send otp via mail
-    await this.mailService.sendOtpRequestMail({
-      options: {
-        subject: otpRequest.reason,
-        to: currentUser.email,
-        template: 'otp-request',
-      },
-      context: {
-        otp: otp.value,
-        name: currentUser.username,
-      },
+      // Send otp via mail
+      await this.mailService.sendOtpRequestMail({
+        options: {
+          subject: otpRequest.reason,
+          to: currentUser.email,
+          template: 'otp-request',
+        },
+        context: {
+          otp: otp.value,
+          name: currentUser.username,
+        },
+      });
+
+      return {
+        message: 'A one-time-password has been sent your email.',
+      };
     });
-
-    return {
-      message: 'A one-time-password has been sent your email.',
-    };
   }
 
   async passwordReset({ newPassword, otp }: PasswordResetDto) {
-    const oneTimePassword = await this.otpService.verify(otp);
+    return this.prisma.$transaction(async (tx) => {
+      const oneTimePassword = await this.otpService.verify(otp, tx);
 
-    const user = oneTimePassword.user;
+      const user = oneTimePassword.user;
 
-    await this.usersService.updateUser({
-      where: {
-        id: user.id,
-      },
-      data: {
-        passwordDigest: PasswordService.hashedPassword(newPassword),
-      },
+      await this.usersService.updateUser({
+        where: {
+          id: user.id,
+        },
+        data: {
+          passwordDigest: PasswordService.hashedPassword(newPassword),
+        },
+      });
+
+      return {
+        message: 'You have successfully reset your password.',
+      };
     });
-
-    return {
-      message: 'You have successfully reset your password.',
-    };
   }
 
   async activateAccount(activateAccountDto: ActivateAccountDto) {
-    const oneTimePassword = await this.otpService.verify(
-      activateAccountDto.otp,
-    );
-
-    const user = oneTimePassword.user;
-
-    if (!user.approved) {
-      throw new ForbiddenException(
-        'Sorry! Your account is still pending approval. Please contact your administrator.',
+    return this.prisma.$transaction(async (tx) => {
+      const oneTimePassword = await this.otpService.verify(
+        activateAccountDto.otp,
+        tx,
       );
-    }
 
-    await this.usersService.updateUser({
-      where: {
-        id: user.id,
-      },
-      data: {
-        firstName: activateAccountDto.firstName,
-        lastName: activateAccountDto.lastName,
-        activated: true,
-      },
+      const user = oneTimePassword.user;
+
+      if (!user.approved) {
+        throw new ForbiddenException(
+          'Sorry! Your account is still pending approval. Please contact your administrator.',
+        );
+      }
+
+      await this.usersService.updateUser(
+        {
+          where: {
+            id: user.id,
+          },
+          data: {
+            firstName: activateAccountDto.firstName,
+            lastName: activateAccountDto.lastName,
+            activated: true,
+          },
+        },
+        tx,
+      );
+
+      return {
+        message: 'Your account has been activated successfully.',
+      };
     });
-
-    return {
-      message: 'Your account has been activated successfully.',
-    };
   }
 }
