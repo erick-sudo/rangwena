@@ -3,12 +3,10 @@
     <div
       class="container mx-auto flex flex-col items-center justify-center gap-4"
     >
-      <div class="max-w-lg h-44">
-        <img
-          class="w-full h-full object-contain"
-          src="/svg/undraw_forgot_password.svg"
-        />
+      <div class="max-w-sm w-full h-44">
+        <v-img src="/svg/undraw_forgot_password.svg"></v-img>
       </div>
+
       <v-form
         ref="form"
         class="flex flex-col grow max-w-sm gap-2"
@@ -36,7 +34,7 @@
           class=""
           color="primary"
           clearable
-          variant="solo-filled"
+          variant="solo"
           v-model="identity"
           :counter="75"
           :rules="[
@@ -51,9 +49,7 @@
             >{{ waitingTimer }} sec</span
           >
           <span class="flex-grow"></span>
-          <RouterLink
-            class="text-primary"
-            to="/reset-password"
+          <RouterLink class="text-primary" to="/reset-password"
             >I have a reset code?</RouterLink
           >
         </div>

@@ -6,12 +6,7 @@
         :subtitle="authStore.principal?.email"
       >
         <template #prepend>
-          <v-avatar
-            border
-            :color="wsStore.online ? 'primary' : 'undefined'"
-            image="http://localhost:8000/erick.jpg"
-            :text="authStore.initials?.firstName"
-          ></v-avatar>
+          <v-icon size="large">mdi-account-outline</v-icon>
         </template>
       </v-list-item>
     </v-list>

@@ -4,11 +4,8 @@
       class="container mx-auto grid md:grid-cols-2 items-center justify-center gap-4"
     >
       <div class="flex md:justify-end">
-        <div class="max-w-sm flex-grow p-4">
-          <img
-            class="w-full h-full object-contain"
-            src="/svg/undraw_secure_login.svg"
-          />
+        <div class="max-w-sm flex-grow p-6">
+          <v-img class="" src="/svg/undraw_secure_login.svg"></v-img>
         </div>
       </div>
       <div class="flex md:justify-start">
@@ -17,13 +14,13 @@
           v-model="valid"
           validate-on="input lazy"
           @submit.prevent="handleSubmit"
-          class="flex flex-col max-w-sm min-w-[20rem] flex-grow"
+          class="flex flex-col max-w-sm min-w-[20rem] flex-grow py-4"
         >
           <RouterLink class="mx-auto" to="/">
             <v-icon color="primary" icon="$vuetify" size="64"></v-icon>
           </RouterLink>
-          <h1 class="text-2xl font-semibold mx-auto">Welcome back!</h1>
-          <h3 class="text-xl font-semibold mx-auto">Log into your account</h3>
+          <h1 class="text-2xl mx-auto">Welcome back!</h1>
+          <h3 class="text-xl mx-auto">Log into your account</h3>
 
           <v-text-field
             prepend-inner-icon="mdi-account-outline"
@@ -33,7 +30,7 @@
             color="primary"
             clearable
             label="Username, Email, or Phone"
-            variant="solo-filled"
+            variant="solo"
             v-model="identity"
             :counter="75"
             :rules="[
@@ -54,7 +51,7 @@
             color="primary"
             clearable
             label="Password"
-            variant="solo-filled"
+            variant="solo"
             v-model="password"
             :rules="[(v) => !!v || 'Please enter your password.']"
           ></v-text-field>
@@ -84,14 +81,14 @@
             Sign in
           </v-btn>
 
-          <p class="self-center mt-2 text-sm">
+          <p class="self-center mt-4 text-sm">
             Not yet registered?
             <RouterLink class="text-primary" to="init-reg"
               >Sign up here</RouterLink
             >.
           </p>
 
-          <div class="flex mt-2 items-center gap-3">
+          <!-- <div class="flex mt-2 items-center gap-3">
             <span class="flex-grow border-b"></span>
             <span class="">or continue with</span>
             <span class="flex-grow border-b"></span>
@@ -119,7 +116,7 @@
             color="primary"
           >
             Facebook
-          </v-btn>
+          </v-btn> -->
         </v-form>
       </div>
     </div>

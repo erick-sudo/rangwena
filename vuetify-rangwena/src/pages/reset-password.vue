@@ -37,7 +37,7 @@
           color="primary"
           clearable
           label="New Password"
-          variant="solo-filled"
+          variant="solo"
           v-model="newPassword"
           :rules="[
             (v) => !!v || 'Please enter your password.',
@@ -58,7 +58,7 @@
           color="primary"
           clearable
           label="Confirm New Password"
-          variant="solo-filled"
+          variant="solo"
           v-model="confirmNewPassword"
           :rules="[
             (v) => !!v || 'Password confirmation is required.',
@@ -74,7 +74,7 @@
             :error="otpError"
             :disabled="submitting"
             type="text"
-            variant="outlined"
+            variant="solo"
             :loading="submitting"
             class="otp-input-custom"
             height="60"
@@ -83,7 +83,7 @@
             @click="$router.push('/request-password-reset')"
             block
             color="primary"
-            class="mx-auto mb-2 border"
+            class="mx-auto mb-2"
             type="button"
             variant="tonal"
             rounded="lg"

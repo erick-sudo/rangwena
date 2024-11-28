@@ -53,24 +53,30 @@
 
     <v-menu>
       <template #activator="{ props }">
-        <v-avatar
-          border
-          :color="wsStore.online ? 'primary' : 'undefined'"
-          class="me-4"
+        <v-btn
+          size="40"
+          :color="wsStore.online ? 'primary' : undefined"
+          variant="tonal"
           v-bind="props"
-          size="small"
-          image="http://localhost:8000/erick.jpg"
-        ></v-avatar>
+          rounded="xl"
+          class="border"
+        >
+          <span>{{ `${initials?.firstName[0]}${initials?.lastName[0]}` }}</span>
+        </v-btn>
       </template>
 
       <v-card rounded="lg" elevation="8">
         <template #title>
           <v-list-item
-            prepend-avatar="http://localhost:8000/erick.jpg"
             :title="`${initials?.firstName} ${initials?.lastName}`"
             :subtitle="principal?.email"
-          ></v-list-item>
+          >
+            <template #prepend>
+              <v-icon size="large">mdi-account-outline</v-icon>
+            </template>
+          </v-list-item>
         </template>
+        <v-divider></v-divider>
         <v-list density="compact" nav>
           <v-list-item
             prepend-icon="mdi-account-details-outline"
@@ -102,12 +108,10 @@
   </v-app-bar>
 </template>
 <script setup lang="ts">
-import { useAlertStore } from "@/stores/store.alerts";
 import { useAuthStore } from "@/stores/store.auth";
 import { useWsStore } from "@/stores/store.ws";
 
 const { principal, initials } = useAuthStore();
-const {} = useAlertStore();
 const wsStore = useWsStore();
 
 const emit = defineEmits<{

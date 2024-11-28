@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto max-w-lg p-2">
-    <v-card :loading="submitting">
+    <v-card class="" elevation="10" :loading="submitting">
       <v-toolbar color="primary">
         <v-toolbar-title>Member Registration Request</v-toolbar-title>
         <v-toolbar-items class="pt-1 pe-2 gap-2">
@@ -13,12 +13,12 @@
           >
           <v-menu v-if="authStore.loggedIn">
             <template #activator="{ props }">
-              <v-avatar
-                border="2"
-                v-bind="props"
-                size="24"
-                image="http://localhost:8000/erick.jpg"
-              ></v-avatar>
+              <div>
+                <v-btn icon="" size="30" variant="tonal" v-bind="props">
+                  <v-icon size="small">mdi-account-outline</v-icon>
+                </v-btn>
+              </div>
+              <!-- <v-avatar text="T" border="2" v-bind="props" size="24"></v-avatar> -->
             </template>
             <v-list nav density="compact" class="pa-0">
               <v-list-item
@@ -63,6 +63,7 @@
               <v-text-field
                 prepend-inner-icon="mdi-account"
                 rounded="lg"
+                density="comfortable"
                 clearable
                 prefix="@"
                 label="Username"
