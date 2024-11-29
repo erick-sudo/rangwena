@@ -86,13 +86,11 @@ export type SuggestionToggleAction =
   | "resolve"
   | "unresolve";
 
-export type MessageStatus =
-  | "new"
-  | "draft"
-  | "pending"
-  | "sent"
-  | "delivered"
-  | "viewed";
+export type IncomingMessageStatus = "new" | "draft" | "pending";
+
+export type OutgoingMessageStatus = "sent" | "delivered" | "viewed";
+
+export type MessageStatus = IncomingMessageStatus | OutgoingMessageStatus;
 
 export interface RawWSChatMessage {
   from: string;

@@ -1,5 +1,5 @@
+import { JwtService } from '@nestjs/jwt';
 import {
-  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -9,16 +9,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Principal } from 'src/auth/authentication/authentication.guard';
-import { UsersService } from 'src/users/users.service';
+import { SESSION_KEY } from 'src/auth/authentication/authentication.controller';
 
 @WebSocketGateway({
   cors: {
-    origin: [
-      'http://192.168.158.148:4000',
-      'http://localhost:4000',
-      'https://rangwena.vercel.app',
-    ],
+    origin: ['http://localhost:4000'],
+    credentials: true,
   },
 })
 export class ChatGateway
@@ -27,43 +23,42 @@ export class ChatGateway
   @WebSocketServer()
   server: Server;
 
-  private onlineUsers: Record<string, { email: string; id: string }> = {};
-
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   afterInit(server: Server) {
     //console.log('Websocket server init...');
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    //console.log(`JOINED: #${client.id}`);
+    const sessionCookie = this.extractCookiesFromSocket(client)[SESSION_KEY];
+
+    if (sessionCookie) {
+      const decodedToken = this.jwtService.decode(sessionCookie);
+
+      if (decodedToken?.sub) {
+        this.server.emit(`user:${decodedToken.sub}:up`, {
+          time: new Date().toISOString(),
+        });
+        console.log(
+          `UP:: ${decodedToken.email?.padEnd(30)} ${decodedToken.sub}`,
+        );
+      }
+    }
   }
 
   handleDisconnect(client: Socket) {
-    const user = this.onlineUsers[client.id];
-    if (user) {
-      this.server.emit(`user:${user.id}:down`, user);
-      delete this.onlineUsers[client.id];
+    const sessionCookie = this.extractCookiesFromSocket(client)[SESSION_KEY];
+    if (sessionCookie) {
+      const decodedToken = this.jwtService.decode(sessionCookie);
+      if (decodedToken?.sub) {
+        this.server.emit(`user:${decodedToken.sub}:down`, {
+          time: new Date().toISOString(),
+        });
+        console.log(
+          `DOWN:: ${decodedToken.email?.padEnd(30)} ${decodedToken.sub}`,
+        );
+      }
     }
-  }
-
-  @SubscribeMessage('users:auth')
-  async handleIdentification(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() principal: Principal,
-  ) {
-    const usr = await this.userService.findById(principal.id).catch(() => null);
-
-    if (usr) {
-      this.onlineUsers[client.id] = principal;
-      this.server.emit(`user:${usr.id}:up`, principal);
-    }
-    return usr ? principal : usr;
-  }
-
-  @SubscribeMessage('users:online')
-  handleOnlineUsers() {
-    return Object.values(this.onlineUsers);
   }
 
   @SubscribeMessage('chat:message:new')
@@ -73,6 +68,19 @@ export class ChatGateway
       payload,
     );
     return payload;
+  }
+
+  extractCookiesFromSocket(client: Socket): Record<string, string> {
+    return (client.handshake.headers.cookie || '').split(',').reduce(
+      (acc, curr) => {
+        const [k, v] = curr.split('=');
+        if (k && v) {
+          acc[k] = v;
+        }
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
   }
 }
 

@@ -18,12 +18,14 @@ watch(
   () => authStore.principal,
   async (newValue) => {
     if (newValue) {
-      wsStore.bindWsEvents(newValue);
+      wsStore.setCurrentUser(newValue);
+      wsStore.bindWsEvents();
       await memberStore.fetchMembers();
-      wsStore.initConversations()
-      wsStore.bindConversationsEvents(newValue)
+      wsStore.initConversations();
+      wsStore.bindConversationsEvents();
     } else {
       socket.off();
+      wsStore.setCurrentUser(null);
     }
   },
   {

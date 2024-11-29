@@ -1,19 +1,21 @@
 <template>
-  <v-list-item
-    variant="text"
-    rounded="0"
-    prepend-avatar="http://192.168.180.148:8000/erick.jpg"
-  >
+  <v-list-item variant="text" rounded="0">
     <template #prepend>
-      <div class="me-2 relative">
-        <v-avatar
-          :border="isOnline(user.id)"
-          color="primary"
-          class="m-2"
-        ></v-avatar>
+      <div class="me-2 relative py-0.5">
+        <v-btn
+          size="40"
+          :color="wsStore.isOnline(user.id) ? 'primary' : undefined"
+          variant="tonal"
+          rounded="xl"
+        >
+          <span class="text-sm" v-if="user.firstName && user.lastName">{{
+            `${user.firstName[0]}${user.lastName[0]}`
+          }}</span>
+          <v-icon v-else>mdi-account</v-icon>
+        </v-btn>
         <span
           v-if="unread > 0"
-          class="text-xs absolute bottom-1 right-1 h-4 w-4 flex items-center justify-center rounded-full bg-primary"
+          class="text-xs absolute bottom-0 right-0 h-4 w-4 flex items-center justify-center rounded-full bg-primary"
           >{{ unread }}</span
         >
       </div>
@@ -23,13 +25,14 @@
         <template #activator="{ props }">
           <v-btn
             variant="text"
+            density="comfortable"
             size="small"
             rounded="xl"
             class="ml-2"
             icon
             v-bind="props"
           >
-            <v-icon>mdi-dots-vertical</v-icon>
+            <v-icon size="small">mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
 
@@ -72,7 +75,7 @@ import { RUser } from "@/lib/types";
 import { useWsStore } from "@/stores/store.ws";
 
 const wsStore = useWsStore();
-defineProps<{
+const props = defineProps<{
   user: RUser;
   unread: number;
 }>();
@@ -83,5 +86,5 @@ const handleConversationSelection = (conversationId: string) => {
 const deleteConversation = (conversationId: string) => {
   wsStore.deleteConversation(conversationId);
 };
-const isOnline = (id: string) => wsStore.isOnline(id);
+const isOnline = computed(() => wsStore.isOnline(props.user.id));
 </script>

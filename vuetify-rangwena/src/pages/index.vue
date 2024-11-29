@@ -1,5 +1,6 @@
 <template>
-  <under-construction></under-construction>
+  <!-- <under-construction></under-construction> -->
+  <e-chart></e-chart>
 </template>
 
 <script lang="ts" setup></script>

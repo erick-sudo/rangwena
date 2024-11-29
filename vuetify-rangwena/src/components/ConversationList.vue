@@ -35,31 +35,47 @@
             absolute
             offset
             color="primary"
+            size="small"
             v-bind="props"
             icon="mdi-plus"
           ></v-fab>
         </template>
         <v-card>
-          <v-list-item
-            v-for="(user, index) in memberStore.members"
-            :key="index"
-            @click="initiateConversation(user)"
-            variant="text"
-            rounded="0"
-            prepend-avatar="http://192.168.180.148:8000/erick.jpg"
-          >
-            <template #prepend>
-              <v-avatar
-                :border="isOnline(user.id)"
-                color="primary"
-                class="m-2"
-              ></v-avatar>
-            </template>
-            <v-list-item-title
-              >{{ user.firstName }} {{ user.lastName }}</v-list-item-title
+          <v-list v-if="otherMembers.length > 0" nav
+            ><v-list-item
+              nav
+              v-for="(user, index) in otherMembers"
+              :key="index"
+              @click="initiateConversation(user)"
+              variant="text"
+              rounded="0"
             >
-            <v-list-item-subtitle>@{{ user.username }}</v-list-item-subtitle>
-          </v-list-item>
+              <template #prepend>
+                <v-btn
+                  size="32"
+                  :color="isOnline(user.id) ? 'primary' : undefined"
+                  variant="tonal"
+                  rounded="xl"
+                  class="border me-2 my-1"
+                >
+                  <span
+                    v-if="user.firstName && user.lastName"
+                    class="text-sm"
+                    >{{ `${user.firstName[0]}${user.lastName[0]}` }}</span
+                  >
+                  <v-icon v-else>mdi-account</v-icon>
+                </v-btn>
+              </template>
+              <v-list-item-title>
+                <span v-if="user.firstName && user.lastName"
+                  >{{ user.firstName }} {{ user.lastName }}</span
+                >
+                <span v-else>{{ user.phoneNumber }}</span>
+              </v-list-item-title>
+              <v-list-item-subtitle>@{{ user.username }}</v-list-item-subtitle>
+            </v-list-item></v-list
+          >
+          <div class="px-4 py-8" v-else>No members yet!!</div>
         </v-card>
       </v-menu>
     </div>
@@ -77,6 +93,10 @@ const wsStore = useWsStore();
 const userCategories = ["All", "Online", "Offline", "Channels"];
 const active = ref("All");
 
+const otherMembers = computed(() =>
+  memberStore.members.filter((m) => m.id !== authStore.principal?.id)
+);
+
 const newMessages = computed<Record<string, number>>(() => {
   return Object.entries(wsStore.conversations).reduce(
     (acc, [key, { conversations }]) => {
@@ -92,6 +112,7 @@ const newMessages = computed<Record<string, number>>(() => {
     },
     {} as Record<string, number>
   );
+  return {};
 });
 
 const conversationPartners = computed<ConversationPartner[]>(() => {
@@ -120,7 +141,7 @@ const handleConversationSelection = (conversationKey: string) => {
 
 const initiateConversation = (partner: ConversationPartner) => {
   if (authStore.principal) {
-    wsStore.initiateConversation(partner, authStore.principal);
+    wsStore.initiateConversation(partner);
   }
 };
 </script>

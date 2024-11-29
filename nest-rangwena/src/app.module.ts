@@ -10,7 +10,6 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RolesModule } from './roles/roles.module';
 import { UsersModule } from './users/users.module';
 import configuration from './config/configuration';
-import { UsersService } from './users/users.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/authentication/authentication.guard';
 import { RolesGuard } from './auth/authorization/roles.guard';

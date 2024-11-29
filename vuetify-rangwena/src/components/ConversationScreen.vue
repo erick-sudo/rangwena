@@ -1,9 +1,20 @@
 <template>
   <div v-if="wsStore.conversation" class="flex flex-col xl:col-span-2">
     <div class="flex items-center gap-2">
-      <slot name="prepend"></slot>
-      <div class="flex-grow"><slot name="title"></slot></div>
-      <slot name="append"></slot>
+      <slot
+        name="prepend"
+        :conversationId="wsStore.selectedConversationKey!!"
+      ></slot>
+      <div class="flex-grow">
+        <slot
+          name="title"
+          :conversationId="wsStore.selectedConversationKey!!"
+        ></slot>
+      </div>
+      <slot
+        name="append"
+        :conversationId="wsStore.selectedConversationKey!!"
+      ></slot>
     </div>
     <div class="flex-grow p-2">
       <chat-messages
@@ -11,8 +22,48 @@
         :msgs="wsStore.conversation.conversations"
         class=""
       ></chat-messages>
-      <div v-else class="m-4 p-12 border">
+      <div
+        v-else
+        class="m-4 py-8 border flex flex-col items-center justify-center gap-3"
+      >
         <span>No conversations yet</span>
+        <div class="flex-grow h-52 max-w-lg w-full">
+          <v-img src="/svg/undraw_begin_chat.svg"></v-img>
+        </div>
+        <div class="flex gap-2">
+          <v-btn
+            size="small"
+            variant="tonal"
+            icon="mdi-text-box-outline"
+            @click=""
+            rounded="xl"
+            color="primary"
+          ></v-btn>
+          <v-btn
+            size="small"
+            variant="tonal"
+            icon="mdi-camera-outline"
+            @click=""
+            rounded="xl"
+            color="primary"
+          ></v-btn>
+          <v-btn
+            size="small"
+            variant="tonal"
+            icon="mdi-image-outline"
+            @click=""
+            rounded="xl"
+            color="primary"
+          ></v-btn>
+          <v-btn
+            size="small"
+            variant="tonal"
+            icon="mdi-file-document-outline"
+            @click=""
+            rounded="xl"
+            color="primary"
+          ></v-btn>
+        </div>
       </div>
     </div>
     <v-form
@@ -34,15 +85,22 @@
       <v-btn
         :disabled="!!!text"
         type="submit"
-        variant="elevated"
+        :variant="!!text ? 'elevated' : 'tonal'"
         icon
-        color="primary"
+        :color="!!text ? 'primary' : 'secondary'"
       >
         <v-icon>mdi-send</v-icon>
       </v-btn>
     </v-form>
   </div>
-  <div v-else class="relative">No conversations</div>
+  <div v-else class="relative flex flex-col items-center justify-center gap-3">
+    <h3 class="max-w-64 text-center">
+      Select, send, and received direct messages from members.
+    </h3>
+    <div class="flex-grow max-h-64 max-w-lg w-full">
+      <v-img src="/svg/undraw_begin_chat.svg"></v-img>
+    </div>
+  </div>
 </template>
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/store.auth";

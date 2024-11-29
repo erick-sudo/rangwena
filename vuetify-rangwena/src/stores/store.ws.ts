@@ -23,6 +23,7 @@ const handleRequest = useAPI();
 
 export const useWsStore = defineStore("ws-chat", {
   state: () => ({
+    _currentUser: null as Principal | null,
     _conversations: {} as LocalConversationsStore,
     _conversation: undefined as LocalConversation | undefined,
     _selectedConversationKey: undefined as string | undefined,
@@ -54,6 +55,9 @@ export const useWsStore = defineStore("ws-chat", {
     },
   },
   actions: {
+    setCurrentUser(currentUser: Principal | null) {
+      this._currentUser = currentUser;
+    },
     async fetchPolls() {
       await handleRequest<Poll[]>({
         func: axiosGet,
@@ -206,7 +210,6 @@ export const useWsStore = defineStore("ws-chat", {
     },
     initiateConversation(
       partner: ConversationPartner,
-      currentUser: Principal,
       initConversations: Conversations = []
     ) {
       const conversationKey = partner.id;
@@ -216,7 +219,7 @@ export const useWsStore = defineStore("ws-chat", {
           conversations: initConversations,
         };
       }
-      this.bindConversationEvents(conversationKey, currentUser);
+      this.bindConversationEvents(conversationKey);
       this.sync();
     },
     sendMessage(msg: WSChatMessage, partner: ConversationPartner) {
@@ -235,19 +238,19 @@ export const useWsStore = defineStore("ws-chat", {
         this.sync();
       });
     },
-    bindWsEvents(currentUser: Principal) {
+    bindWsEvents() {
       // Listen to an initial connection
       // Emit an authentication event
       // Retrieve online users
       socket.on("connect", () => {
         this._online = true;
-        socket.emit("users:auth", currentUser, (res: Principal | null) => {
-          if (res) {
-            socket.emit("users:online", (res: Entity[]) => {
-              this._onlineUsers = res;
-            });
-          }
-        });
+        // socket.emit("users:auth", this._currentUser, (res: Principal | null) => {
+        //   if (res) {
+        //     socket.emit("users:online", (res: Entity[]) => {
+        //       this._onlineUsers = res;
+        //     });
+        //   }
+        // });
       });
 
       // Handle socket exceptions
@@ -270,7 +273,7 @@ export const useWsStore = defineStore("ws-chat", {
 
       // Subscribe to an anonymous sender
       socket.on(
-        `chat:message:new:from:anonymous:to:${currentUser.id}`,
+        `chat:message:new:from:anonymous:to:${this._currentUser?.id}`,
         async (msg: WSChatMessage) => {
           // Attempt to find the anonymous user from the API
           await handleRequest<RUser>({
@@ -286,9 +289,7 @@ export const useWsStore = defineStore("ws-chat", {
                   status: "new",
                 });
               } else {
-                this.initiateConversation(usr, currentUser, [
-                  { ...msg, status: "new" },
-                ]);
+                this.initiateConversation(usr, [{ ...msg, status: "new" }]);
               }
               this.sync();
             }
@@ -297,25 +298,25 @@ export const useWsStore = defineStore("ws-chat", {
       );
     },
     // Subscribe to events for my previous conversations
-    bindConversationsEvents(currentUser: Principal) {
+    bindConversationsEvents() {
       Object.keys(this._conversations).forEach((key) => {
-        this.bindConversationEvents(key, currentUser);
+        this.bindConversationEvents(key);
       });
     },
 
-    bindConversationEvents(conversationId: string, currentUser: Principal) {
+    bindConversationEvents(conversationId: string) {
       socket.on(`user:${conversationId}:up`, (userUp: Principal) => {
-        this._onlineUsers.push(userUp);
+        this._onlineUsers.push({ id: conversationId });
       });
 
       socket.on(`user:${conversationId}:down`, (userDown: Principal) => {
         this._onlineUsers = this.onlineUsers.filter(
-          (usr) => usr.id !== userDown.id
+          (usr) => usr.id !== conversationId
         );
       });
 
       socket.on(
-        `chat:message:new:from:${conversationId}:to:${currentUser.id}`,
+        `chat:message:new:from:${conversationId}:to:${this._currentUser?.id}`,
         (msg: WSChatMessage) => {
           if (this._conversations[msg.from]) {
             this._conversations[msg.from].conversations.push({
@@ -339,9 +340,22 @@ export const useWsStore = defineStore("ws-chat", {
       this._conversation = undefined;
     },
     selectConversation(id: string) {
-      const localConversation = this._conversations[id] || [];
-      this._selectedConversationKey = id;
-      this._conversation = localConversation;
+      let localConversation = this._conversations[id];
+      if (localConversation) {
+        this._selectedConversationKey = id;
+        localConversation = {
+          partner: localConversation.partner,
+          conversations: localConversation.conversations.map((msg) => {
+            if (msg.status === "new") {
+              msg.status = "viewed";
+              // socket.emit(`chat:message:to:${this._currentUser?.id}:viewed:${msg.id}`)
+            }
+            return msg;
+          }),
+        };
+        this._conversation = localConversation;
+        localConversation.conversations;
+      }
     },
     deleteConversation(conversationId: string) {
       const copy = { ...this._conversations };

@@ -61,7 +61,10 @@
           rounded="xl"
           class="border"
         >
-          <span>{{ `${initials?.firstName[0]}${initials?.lastName[0]}` }}</span>
+          <span class="text-sm" v-if="initials?.firstName && initials?.lastName">{{
+            `${initials?.firstName[0]}${initials?.lastName[0]}`
+          }}</span>
+          <v-icon v-else>mdi-account</v-icon>
         </v-btn>
       </template>
 
