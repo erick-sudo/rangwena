@@ -103,6 +103,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { WSChatMessage } from "@/lib/types";
 import { useAuthStore } from "@/stores/store.auth";
 import { useWsStore } from "@/stores/store.ws";
 
@@ -123,7 +124,7 @@ const handleSubmit = (e: Event) => {
         time: new Date().toString(),
         content: text.value,
         status: "pending",
-      },
+      } as WSChatMessage,
       partner
     );
     text.value = "";

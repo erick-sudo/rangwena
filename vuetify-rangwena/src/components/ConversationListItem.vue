@@ -75,7 +75,7 @@ import { RUser } from "@/lib/types";
 import { useWsStore } from "@/stores/store.ws";
 
 const wsStore = useWsStore();
-const props = defineProps<{
+defineProps<{
   user: RUser;
   unread: number;
 }>();
@@ -86,5 +86,5 @@ const handleConversationSelection = (conversationId: string) => {
 const deleteConversation = (conversationId: string) => {
   wsStore.deleteConversation(conversationId);
 };
-const isOnline = computed(() => wsStore.isOnline(props.user.id));
+// const isOnline = computed(() => wsStore.isOnline(props.user.id));
 </script>

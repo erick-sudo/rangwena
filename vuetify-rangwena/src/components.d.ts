@@ -22,7 +22,6 @@ declare module 'vue' {
     CreatePollForm: typeof import('./components/CreatePollForm.vue')['default']
     DisplayObject: typeof import('./components/DisplayObject.vue')['default']
     EChart: typeof import('./components/charts/EChart.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     InitMemberListItem: typeof import('./components/InitMemberListItem.vue')['default']
     InitMemberRegistration: typeof import('./components/InitMemberRegistration.vue')['default']
     LeftNavigationDrawer: typeof import('./components/LeftNavigationDrawer.vue')['default']

@@ -79,11 +79,8 @@
 </template>
 <script setup lang="ts">
 import { useAuthStore } from "@/stores/store.auth";
-import { useWsStore } from "@/stores/store.ws";
 
 const authStore = useAuthStore();
-
-const wsStore = useWsStore();
 
 const emit = defineEmits<{
   (e: "toggle-drawer"): void;
