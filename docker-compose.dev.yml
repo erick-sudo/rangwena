@@ -1,34 +1,43 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # rangwena-nest-api:
-  #   build:
-  #     context: sahihi-interior-builders-api
-  #     dockerfile: Dockerfile
-  #   container_name: sahihi_api
-  #   depends_on:
-  #     - mysql_db
-  #   ports:
-  #     - "5000:3000"
-  #   environment:
-  #     - VUE_FRONTEND=http://localhost:4000
-  #     - DATABASE_URL=mysql://sahihi_mysql_user:sahihi_mysql_password@mysql_db:3306/sahihi_mysql_database
-  #     - JWT_SECRET="xa5FKG7rDZLX8CKnmMktLp4ljuZqGGzQBBAF5eCW9hwKAR5Gibs4ucivymaZTdihVMaSVKQ+ToYECC3EL+Qa0w=="
-  #     - PORT=3000
-  #   networks:
-  #     - dev_rangwena_network
+  rangwena-nest-api:
+    build:
+      context: nest-rangwena
+      dockerfile: Dockerfile
+    container_name: nest_rangwena_api
+    depends_on:
+      - mysql_db
+    ports:
+      - "5000:3000"
+    environment:
+      - VUE_FRONTEND=http://localhost:4000
+      - DATABASE_URL=postgresql://user_rangwena:password_rangwena@localhost:5433/db_rangwena
+      - DIRECT_URL=postgresql://user_rangwena:password_rangwena@localhost:5433/db_rangwena
+      - JWT_SECRET="xa5FKG7rDZLX8CKnmMktLp4ljuZqGGzQBBAF5eCW9hwKAR5Gibs4ucivymaZTdihVMaSVKQ+ToYECC3EL+Qa0w=="
+      - PORT=3000
+      - MAIL_SERVICE="Gmail"
+      - MAIL_HOST="smtp.gmail.com"
+      - MAIL_PORT=465
+      - MAIL_USER="erickochieng766@gmail.com"
+      - MAIL_PASSWORD="jfhf vqqq ahwu biev"
+      - MAIL_FROM="erickochieng766@gmail.com"
+      - REDIS_HOST="localhost"
+      - REDIS_PORT=6379
+    networks:
+      - dev_rangwena_network
 
-  # rangwena-vuetify:
-  #   build:
-  #     context: sahihi-interior-builders-vue
-  #     dockerfile: Dockerfile
-  #   container_name: sahihi_vue
-  #   depends_on:
-  #     - sahihi-api
-  #   ports:
-  #     - "4000:80"
-  #   networks:
-  #     - dev_rangwena_network
+  rangwena-vuetify:
+    build:
+      context: vuetify-rangwena
+      dockerfile: Dockerfile
+    container_name: vuetified_rangwena_web
+    depends_on:
+      - rangwena-nest-api
+    ports:
+      - "4000:80"
+    networks:
+      - dev_rangwena_network
 
   # rabbitmq:
   #   image: rabbitmq:3-management
@@ -51,7 +60,6 @@ services:
     networks:
       - dev_rangwena_network
 
-
   postgres_db:
     build:
       context: infrastructure_services/postgres
@@ -70,7 +78,6 @@ services:
 
 networks:
   dev_rangwena_network: {}
-
 # volumes:
 #   postgres-data:
 #     driver: local
