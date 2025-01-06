@@ -16,6 +16,7 @@ import {
   Poll,
   LoggedInUserPollStatus,
   PollTally,
+  WSChatMessageReceipt,
 } from "@/lib/types";
 import { defineStore } from "pinia";
 
@@ -328,9 +329,25 @@ export const useWsStore = defineStore("ws-chat", {
         }
       );
 
-      // socket.on(`chat:message:sent:${conv}`, (msg: WSChatMessage) => {});
-      // socket.on(`chat:message:delivered:${conv}`, (msg: WSChatMessage) => {});
-      // socket.on(`chat:message:viewed:${conv}`, (msg: WSChatMessage) => {});
+      socket.on(
+        `chat:message:receipts:${conversationId}`,
+        (receipt: WSChatMessageReceipt) => {
+          console.log("Receipt: ", receipt);
+          // const localConversation = this._conversations[receipt.conversationId];
+          // if (localConversation) {
+          //   this._conversations[receipt.conversationId] = {
+          //     partner: localConversation.partner,
+          //     conversations: localConversation.conversations.map((msg) => {
+          //       if (msg.id === receipt.messageId) {
+          //         msg.status = receipt.status;
+          //       }
+          //       return msg;
+          //     }),
+          //   };
+          //   this.sync();
+          // }
+        }
+      );
     },
     connect() {
       socket.connect();
@@ -354,7 +371,8 @@ export const useWsStore = defineStore("ws-chat", {
           }),
         };
         this._conversation = localConversation;
-        localConversation.conversations;
+        this._conversations[id] = localConversation;
+        this.sync();
       }
     },
     deleteConversation(conversationId: string) {

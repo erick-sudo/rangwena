@@ -86,13 +86,13 @@ export type SuggestionToggleAction =
   | "resolve"
   | "unresolve";
 
-export type IncomingMessageStatus = "new" | "draft" | "pending";
+export type IncomingMessageStatus = "new" | "draft";
 
-export type OutgoingMessageStatus = "sent" | "delivered" | "viewed";
+export type OutgoingMessageStatus = "pending" | "sent" | "delivered" | "viewed";
 
 export type MessageStatus = IncomingMessageStatus | OutgoingMessageStatus;
 
-export interface RawWSChatMessage {
+export interface RawWSChatMessage extends Entity {
   from: string;
   to: string;
   conversationType: ConversationType;
@@ -102,6 +102,12 @@ export interface RawWSChatMessage {
 
 export interface WSChatMessage extends RawWSChatMessage {
   status: MessageStatus;
+}
+
+export interface WSChatMessageReceipt {
+  conversationId: string;
+  messageId: string;
+  status: OutgoingMessageStatus;
 }
 
 export type Conversations = WSChatMessage[];

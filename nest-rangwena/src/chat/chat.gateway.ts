@@ -39,9 +39,9 @@ export class ChatGateway
         this.server.emit(`user:${decodedToken.sub}:up`, {
           time: new Date().toISOString(),
         });
-        console.log(
-          `UP:: ${decodedToken.email?.padEnd(30)} ${decodedToken.sub}`,
-        );
+        // console.log(
+        //   `UP:: ${decodedToken.email?.padEnd(30)} ${decodedToken.sub}`,
+        // );
       }
     }
   }
@@ -54,19 +54,19 @@ export class ChatGateway
         this.server.emit(`user:${decodedToken.sub}:down`, {
           time: new Date().toISOString(),
         });
-        console.log(
-          `DOWN:: ${decodedToken.email?.padEnd(30)} ${decodedToken.sub}`,
-        );
+        // console.log(
+        //   `DOWN:: ${decodedToken.email?.padEnd(30)} ${decodedToken.sub}`,
+        // );
       }
     }
   }
 
   @SubscribeMessage('chat:message:new')
   async handleNewMessage(@MessageBody() payload: WSChatMessage) {
-    this.server.emit(
-      `chat:message:new:from:${payload.from}:to:${payload.to}`,
-      payload,
-    );
+    // this.server.emit(
+    //   `chat:message:new:from:${payload.from}:to:${payload.to}`,
+    //   payload,
+    // );
     return payload;
   }
 

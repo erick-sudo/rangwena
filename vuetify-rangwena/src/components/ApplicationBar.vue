@@ -34,7 +34,7 @@
       </v-speed-dial>
     </template>
 
-    <v-app-bar-title>Rangwena Class of 2013</v-app-bar-title>
+    <v-app-bar-title>Rangwena</v-app-bar-title>
 
     <v-spacer></v-spacer>
 
