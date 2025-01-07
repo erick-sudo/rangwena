@@ -1,31 +1,46 @@
-# Base image
-FROM node:18
+# BUILD STAGE
+FROM node:18-alpine AS builder
 
-# Create app directory
 WORKDIR /usr/src/app
 
-# Copy package.json and yarn.lock
+# Copy package files
 COPY package.json yarn.lock ./
 
-# Install app dependencies
-RUN yarn install
+# Install dependencies
+RUN yarn install --frozen-lockfile
 
-# Bundle app source
+# Copy source code
 COPY . .
 
+# Generate Prisma client
+RUN yarn prisma generate
+
+# Build the application
+RUN yarn build
+
+# PRODUCTION STAGE
+FROM node:18-alpine
+
+# Set node environment to production
+ENV NODE_ENV=production
+
+WORKDIR /usr/src/app
+
+# Copy package files
+COPY package.json yarn.lock ./
+
+# Install only production dependencies
+RUN yarn install --frozen-lockfile --production
+
+# Copy Prisma schema and generated client
+COPY prisma ./prisma
+COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
+
+# Copy built application
+COPY --from=builder /usr/src/app/dist ./dist
 COPY wait-for-it.sh /usr/wait-for-it.sh
 RUN chmod +x /usr/wait-for-it.sh
 
-# Copy the .env and .env.development files
-# COPY .env .development.env ./
-
-RUN yarn prisma generate dev
-
-# Creates a "dist" folder with the production build
-RUN yarn build
-
-# Expose the port on which the app will run
 EXPOSE 3000
 
-# Start the server using the development build
-CMD ["sh", "-c", "yarn run start:migrate:dev"]
+CMD ["yarn", "run", "start:migrate:dev"]
