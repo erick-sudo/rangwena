@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker Build and Push Backend
 
 on:
   push:
@@ -32,11 +32,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: ${{ github.workspace }}
-          file: ./Dockerfile
+          context: ./nest-rangwena
+          file: ./nest-rangwena/Dockerfile
           push: true
           build-args: |
             GIT_COMMIT_SHA=${{ github.sha }}
           tags: |
             elimuhub/api:rangwena-latest
-            
